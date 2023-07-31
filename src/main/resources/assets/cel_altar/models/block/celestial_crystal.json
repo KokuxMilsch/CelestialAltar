@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "cel_altar:block/celestial_crystal"
+  }
+}

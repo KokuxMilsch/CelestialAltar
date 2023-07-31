@@ -1,7 +1,12 @@
 package com.kokuxmilsch.celestialaltar;
 
+import com.kokuxmilsch.celestialaltar.block.ModBlocks;
+import com.kokuxmilsch.celestialaltar.item.ModCreativeModeTabs;
+import com.kokuxmilsch.celestialaltar.item.ModItems;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -37,42 +42,38 @@ public class CelestialAltar
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    //Block Register
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
-    //Item Register
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
-    //Creative Mode Tab Register
-    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
-
-    //Blocks
-    public static final RegistryObject<Block> EXAMPLE_BLOCK = BLOCKS.register("example_block", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)));
-
-    //Items
-    public static final RegistryObject<Item> EXAMPLE_BLOCK_ITEM = ITEMS.register("example_block", () -> new BlockItem(EXAMPLE_BLOCK.get(), new Item.Properties()));
-
 
     public CelestialAltar()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
+        ModItems.register(modEventBus);
+        ModCreativeModeTabs.register(modEventBus);
+        ModBlocks.register(modEventBus);
+
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup); // clientSetup is the name of a method that i've created
+
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
-        // Register the Deferred Register to the mod event bus so blocks get registered
-        BLOCKS.register(modEventBus);
-        // Register the Deferred Register to the mod event bus so items get registered
-        ITEMS.register(modEventBus);
-        // Register the Deferred Register to the mod event bus so tabs get registered
-        CREATIVE_MODE_TABS.register(modEventBus);
+        //creative tabs
+        modEventBus.addListener(this::addCreative);
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
 
-        // Register the item to a creative tab
-        modEventBus.addListener(this::addCreative);
-
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+    }
+
+    private void addCreative(BuildCreativeModeTabContentsEvent event) {
+        if(event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
+            event.accept(ModItems.LIGHTNING_STEEL);
+        }
+    }
+
+    private void clientSetup (final FMLClientSetupEvent event) {
+        ItemBlockRenderTypes.setRenderLayer(ModBlocks.ALTAR.get(), RenderType.cutout()); // Replace ModBlocks.INFUSER_BLOCK.get() with your block
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)
@@ -86,13 +87,6 @@ public class CelestialAltar
         LOGGER.info(Config.magicNumberIntroduction + Config.magicNumber);
 
         Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
-    }
-
-    // Add the example block item to the building blocks tab
-    private void addCreative(BuildCreativeModeTabContentsEvent event)
-    {
-        if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS)
-            event.accept(EXAMPLE_BLOCK_ITEM);
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

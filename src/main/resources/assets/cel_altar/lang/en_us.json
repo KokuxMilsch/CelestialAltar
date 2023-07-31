@@ -1,0 +1,13 @@
+{
+  "item.cel_altar.lightning_steel": "Lightning Steel",
+  "item.cel_altar.sky_crystal_shard": "Sky Crystal Shard",
+  "item.cel_altar.night_sky_crystal_shard": "Night Sky Crystal Shard",
+  "item.cel_altar.enchanted_eye_of_ender": "Enchanted Eye of Ender",
+
+  "tooltip.cel_altar.enchanted_eye_of_ender": "Shift-Right-Click on a Celestial Altar to Activate it\u00A77",
+
+  "block.cel_altar.altar": "Celestial Altar",
+  "block.cel_altar.celestial_crystal": "Celestial Crystal",
+
+  "creativetab.celestial_altar_tab": "Celestial Altar"
+}

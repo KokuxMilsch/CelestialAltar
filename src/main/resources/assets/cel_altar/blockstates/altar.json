@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "cel_altar:block/altar"
+    }
+  }
+}
