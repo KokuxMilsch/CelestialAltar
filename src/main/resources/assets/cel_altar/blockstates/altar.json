@@ -1,6 +1,9 @@
 {
   "variants": {
-    "": {
+    "activated=true": {
+      "model": "cel_altar:block/altar"
+    },
+    "activated=false": {
       "model": "cel_altar:block/altar"
     }
   }
