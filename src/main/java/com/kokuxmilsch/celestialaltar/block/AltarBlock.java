@@ -4,9 +4,11 @@ import com.kokuxmilsch.celestialaltar.block.entity.AltarBlockEntity;
 import com.kokuxmilsch.celestialaltar.block.entity.ModBlockEntities;
 import com.kokuxmilsch.celestialaltar.item.ModItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -30,11 +32,15 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 public class AltarBlock extends BaseEntityBlock {
 
     public static final BooleanProperty ACTIVATED = BooleanProperty.create("activated");
     protected static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
     protected static final VoxelShape VISUAL_SHAPE = Shapes.join(Block.box(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D), Block.box(1.0D, 8.0D, 1.0D, 15.0D, 16.0D, 15.0D), BooleanOp.OR);
+
+    public boolean animate_destroy_multiblock = false;
 
 
     public AltarBlock(Properties pProperties) {
@@ -105,7 +111,27 @@ public class AltarBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-        return createTickerHelper(pBlockEntityType, ModBlockEntities.ALTAR_BLOCK_ENTITY.get(), AltarBlockEntity::tick);
+        return pLevel.isClientSide ? null : createTickerHelper(pBlockEntityType, ModBlockEntities.ALTAR_BLOCK_ENTITY.get(), AltarBlockEntity::tick);
+    }
+
+    @Override
+    public void animateTick(BlockState pState, Level pLevel, BlockPos pPos, RandomSource pRandom) {
+        //Ambient Animation
+        if(pState.getValue(ACTIVATED)) {
+            for (int i = 0; i < 10; i++) {
+                float randomX = (float) pRandom.nextIntBetweenInclusive(-12, 12) / 10;
+                float randomZ = (float) pRandom.nextIntBetweenInclusive(-12, 12) / 10;
+                pLevel.addParticle(ParticleTypes.ENCHANT, pPos.getX() + 0.5 + randomX, pPos.getY() + 1 + (float)i/10, pPos.getZ() + 0.5 + randomZ, 0, 0, 0);
+            }
+        }
+
+        //Destroy Multiblock
+        if(!pState.getValue(ACTIVATED) && this.animate_destroy_multiblock) {
+            pLevel.playLocalSound(pPos.getX(), pPos.getX(), pPos.getX(), SoundEvents.RESPAWN_ANCHOR_DEPLETE.value(), SoundSource.MASTER, 1, 2f, false);
+            pLevel.playLocalSound(pPos.getX(), pPos.getX(), pPos.getX(), SoundEvents.BEACON_DEACTIVATE, SoundSource.MASTER, 1, 1.5f, false);
+            pLevel.addParticle(ParticleTypes.EXPLOSION_EMITTER, false, pPos.getX() + 0.5, pPos.getX() + 0.5, pPos.getX() + 0.5, 0, 0, 0);
+            this.animate_destroy_multiblock = false;
+        }
     }
 
     @Override

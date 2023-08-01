@@ -1,6 +1,7 @@
 package com.kokuxmilsch.celestialaltar.block.entity;
 
 import com.kokuxmilsch.celestialaltar.CelestialAltar;
+import com.kokuxmilsch.celestialaltar.block.AltarBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -26,14 +27,14 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 import static com.kokuxmilsch.celestialaltar.block.AltarBlock.ACTIVATED;
 
 public class AltarBlockEntity extends BlockEntity implements MenuProvider {
 
     public boolean active = false;
     private boolean structure_complete = false;
-    private boolean multiblock_destroyed_client = true;
-    private boolean multiblock_destroyed_server = true;
 
     private final ItemStackHandler itemStackHandler = new ItemStackHandler() {
         @Override
@@ -68,12 +69,6 @@ public class AltarBlockEntity extends BlockEntity implements MenuProvider {
     public void onLoad() {
         super.onLoad();
         lazyItemHandler = LazyOptional.of(() -> itemStackHandler);
-
-        validateMultiblock();
-        if(validMultiblock()) {
-            this.multiblock_destroyed_server = false;
-            this.multiblock_destroyed_client = false;
-        }
 
     }
 
@@ -110,30 +105,20 @@ public class AltarBlockEntity extends BlockEntity implements MenuProvider {
 
     public static void tick(Level level, BlockPos blockPos, BlockState blockState, AltarBlockEntity pBlockEntity) {
 
-        if(!level.isClientSide) {
-            pBlockEntity.validateMultiblock();
-        }
+
+        pBlockEntity.validateMultiblock();
+
 
         if(pBlockEntity.validMultiblock()) {
-        } else if(!pBlockEntity.isMultiblockDestroyed(level)){
-            pBlockEntity.destroyMultiblock(level, blockState);
+            //Process Events
+        } else {
+            pBlockEntity.destroyMultiblock(blockState);
         }
-
-
-        if(level.isClientSide && pBlockEntity.active) {
-            for (int i = 0; i < 10; i++) {
-                level.addParticle(ParticleTypes.ENCHANT,  blockPos.getX()+((float)i/10), blockPos.getY()+((float)i/10), blockPos.getZ()+((float)i/10), 0,0, 0);
-            }
-        }
-
-
     }
 
     public void activateAltar(BlockState pState) {
         active = true;
-        this.level.setBlock(this.worldPosition, pState.setValue(ACTIVATED, true), 0);
-        this.multiblock_destroyed_server = false;
-        this.multiblock_destroyed_client = false;
+        this.level.setBlock(this.worldPosition, pState.setValue(ACTIVATED, true), 3);
     }
 
     public void validateMultiblock() {
@@ -148,22 +133,15 @@ public class AltarBlockEntity extends BlockEntity implements MenuProvider {
         return this.structure_complete;
     }
 
-    public void destroyMultiblock(Level pLevel, BlockState pBlockState) {
-        if(pLevel.isClientSide) {
-            System.out.println("destroyed Multiblock clientside");
-            pLevel.playLocalSound(this.worldPosition.getX(), this.worldPosition.getX(), this.worldPosition.getX(), SoundEvents.RESPAWN_ANCHOR_DEPLETE.value(), SoundSource.MASTER, 1, 2f, false);
-            pLevel.playLocalSound(this.worldPosition.getX(), this.worldPosition.getX(), this.worldPosition.getX(), SoundEvents.BEACON_DEACTIVATE, SoundSource.MASTER, 1, 1.5f, false);
-            pLevel.addParticle(ParticleTypes.EXPLOSION_EMITTER, false, this.worldPosition.getX() + 0.5, this.worldPosition.getX() + 0.5, this.worldPosition.getX() + 0.5, 0, 0, 0);
-            this.multiblock_destroyed_client = true;
-        } else {
-            System.out.println("destroyed Multiblock serverside");
-            active = false;
-            pLevel.setBlock(this.worldPosition, pBlockState.setValue(ACTIVATED, false), 2);
-            this.multiblock_destroyed_server = true;
+    public void destroyMultiblock(BlockState pBlockState) {
+        if(!active) {
+            return;
         }
-    }
-
-    private boolean isMultiblockDestroyed(Level pLevel) {
-        return pLevel.isClientSide ? multiblock_destroyed_client : multiblock_destroyed_server;
+        if(this.getBlockState().getBlock() instanceof AltarBlock) {
+            AltarBlock altarBlock = Objects.requireNonNull((AltarBlock) this.getBlockState().getBlock());
+            altarBlock.animate_destroy_multiblock = true;
+        }
+        active = false;
+        this.level.setBlock(this.worldPosition, pBlockState.setValue(ACTIVATED, false), 3);
     }
 }
