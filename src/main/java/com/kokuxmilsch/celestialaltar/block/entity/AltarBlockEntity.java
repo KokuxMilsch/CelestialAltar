@@ -2,6 +2,7 @@ package com.kokuxmilsch.celestialaltar.block.entity;
 
 import com.kokuxmilsch.celestialaltar.CelestialAltar;
 import com.kokuxmilsch.celestialaltar.block.AltarBlock;
+import com.kokuxmilsch.celestialaltar.multiblock.Multiblock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -17,6 +18,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -106,7 +108,7 @@ public class AltarBlockEntity extends BlockEntity implements MenuProvider {
     public static void tick(Level level, BlockPos blockPos, BlockState blockState, AltarBlockEntity pBlockEntity) {
 
 
-        pBlockEntity.validateMultiblock();
+        pBlockEntity.validateMultiblock(level, blockPos);
 
 
         if(pBlockEntity.validMultiblock()) {
@@ -122,8 +124,8 @@ public class AltarBlockEntity extends BlockEntity implements MenuProvider {
         this.level.setBlock(this.worldPosition, pState.setValue(ACTIVATED, true), 3);
     }
 
-    public void validateMultiblock() {
-        if (this.level.getBlockState(this.worldPosition.below(1)).is(Blocks.BEACON)) {
+    public void validateMultiblock(Level pLevel, BlockPos pBlockPos) {
+        if (Multiblock.scanMultiblock(Multiblock.CELESTIAL_ALTAR_MULTIBLOCK, pBlockPos, pLevel)) {
             this.structure_complete = true;
             return;
         }

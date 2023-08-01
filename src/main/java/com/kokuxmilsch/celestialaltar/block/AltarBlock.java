@@ -113,7 +113,7 @@ public class AltarBlock extends BaseEntityBlock {
     public void animateTick(BlockState pState, Level pLevel, BlockPos pPos, RandomSource pRandom) {
         //Ambient Animation
         if(pState.getValue(ACTIVATED)) {
-            for(int i = 0; i < 10; ++i) {
+            for(int i = 0; i < 20; ++i) {
                 double d1 = pRandom.nextGaussian() * 0.5D; //delta 1
                 double d3 = pRandom.nextGaussian() * 0.5D; //delta 2
                 double d5 = pRandom.nextGaussian() * 0.5D; //delta 3
@@ -121,7 +121,7 @@ public class AltarBlock extends BaseEntityBlock {
                 double d7 = pRandom.nextGaussian() * 1;
                 double d8 = pRandom.nextGaussian() * 1;
 
-                pLevel.addParticle(ParticleTypes.ENCHANT, pPos.getX() + d1, pPos.getY() + d3, pPos.getZ() + d5, d6, d7, d8);
+                pLevel.addParticle(ParticleTypes.ENCHANT, pPos.getX()+0.5D + d1, pPos.getY()+0.5D + d3, pPos.getZ()+0.5D + d5, d6, d7, d8);
 
             }
         }
