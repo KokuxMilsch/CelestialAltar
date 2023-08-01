@@ -1,6 +1,7 @@
 package com.kokuxmilsch.celestialaltar;
 
 import com.kokuxmilsch.celestialaltar.block.ModBlocks;
+import com.kokuxmilsch.celestialaltar.block.entity.ModBlockEntities;
 import com.kokuxmilsch.celestialaltar.item.ModCreativeModeTabs;
 import com.kokuxmilsch.celestialaltar.item.ModItems;
 import com.mojang.logging.LogUtils;
@@ -50,6 +51,7 @@ public class CelestialAltar
         ModItems.register(modEventBus);
         ModCreativeModeTabs.register(modEventBus);
         ModBlocks.register(modEventBus);
+        ModBlockEntities.register(modEventBus);
 
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup); // clientSetup is the name of a method that i've created
 
