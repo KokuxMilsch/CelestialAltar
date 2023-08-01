@@ -6,8 +6,6 @@ import com.kokuxmilsch.celestialaltar.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -32,7 +30,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
 
 public class AltarBlock extends BaseEntityBlock {
 
@@ -40,7 +37,6 @@ public class AltarBlock extends BaseEntityBlock {
     protected static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
     protected static final VoxelShape VISUAL_SHAPE = Shapes.join(Block.box(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D), Block.box(1.0D, 8.0D, 1.0D, 15.0D, 16.0D, 15.0D), BooleanOp.OR);
 
-    public boolean animate_destroy_multiblock = false;
 
 
     public AltarBlock(Properties pProperties) {
@@ -56,26 +52,25 @@ public class AltarBlock extends BaseEntityBlock {
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         if(!pHand.equals(InteractionHand.OFF_HAND) && !pState.getValue(ACTIVATED)) {
-
-            BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-            if(blockEntity instanceof AltarBlockEntity) {
-                if(!((AltarBlockEntity) blockEntity).validMultiblock()) {
-                    return InteractionResult.FAIL;
-                }
-            } else {
-                return InteractionResult.FAIL;
-            }
-
             ItemStack useItem = pPlayer.getItemInHand(pHand);
-            if (useItem.is(ModItems.ENCHANTED_EYE_OF_ENDER.get())) {
-                if(pLevel.isClientSide) {
-                    pLevel.playSound(pPlayer,pPos, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.MASTER, 1f, 1.5f);
-                } else {
+            if(useItem.is(ModItems.ENCHANTED_EYE_OF_ENDER.get())) {
+                if(!pLevel.isClientSide) {
+                    BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
+                    if (blockEntity instanceof AltarBlockEntity) {
+                        if (!((AltarBlockEntity) blockEntity).validMultiblock()) {
+                            return InteractionResult.FAIL;
+                        }
+                    } else {
+                        return InteractionResult.FAIL;
+                    }
                     ((AltarBlockEntity) blockEntity).activateAltar(pState);
                     useItem.shrink(1);
                 }
                 return InteractionResult.SUCCESS;
+            } else {
+                return InteractionResult.FAIL;
             }
+
 
         }
 
@@ -94,12 +89,12 @@ public class AltarBlock extends BaseEntityBlock {
     }
 
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        return SHAPE;
+        return VISUAL_SHAPE;
     }
 
     @Override
     public VoxelShape getVisualShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        return VISUAL_SHAPE;
+        return SHAPE;
     }
 
     @Nullable
@@ -118,19 +113,17 @@ public class AltarBlock extends BaseEntityBlock {
     public void animateTick(BlockState pState, Level pLevel, BlockPos pPos, RandomSource pRandom) {
         //Ambient Animation
         if(pState.getValue(ACTIVATED)) {
-            for (int i = 0; i < 10; i++) {
-                float randomX = (float) pRandom.nextIntBetweenInclusive(-12, 12) / 10;
-                float randomZ = (float) pRandom.nextIntBetweenInclusive(-12, 12) / 10;
-                pLevel.addParticle(ParticleTypes.ENCHANT, pPos.getX() + 0.5 + randomX, pPos.getY() + 1 + (float)i/10, pPos.getZ() + 0.5 + randomZ, 0, 0, 0);
-            }
-        }
+            for(int i = 0; i < 10; ++i) {
+                double d1 = pRandom.nextGaussian() * 0.5D; //delta 1
+                double d3 = pRandom.nextGaussian() * 0.5D; //delta 2
+                double d5 = pRandom.nextGaussian() * 0.5D; //delta 3
+                double d6 = pRandom.nextGaussian() * 1;
+                double d7 = pRandom.nextGaussian() * 1;
+                double d8 = pRandom.nextGaussian() * 1;
 
-        //Destroy Multiblock
-        if(!pState.getValue(ACTIVATED) && this.animate_destroy_multiblock) {
-            pLevel.playLocalSound(pPos.getX(), pPos.getX(), pPos.getX(), SoundEvents.RESPAWN_ANCHOR_DEPLETE.value(), SoundSource.MASTER, 1, 2f, false);
-            pLevel.playLocalSound(pPos.getX(), pPos.getX(), pPos.getX(), SoundEvents.BEACON_DEACTIVATE, SoundSource.MASTER, 1, 1.5f, false);
-            pLevel.addParticle(ParticleTypes.EXPLOSION_EMITTER, false, pPos.getX() + 0.5, pPos.getX() + 0.5, pPos.getX() + 0.5, 0, 0, 0);
-            this.animate_destroy_multiblock = false;
+                pLevel.addParticle(ParticleTypes.ENCHANT, pPos.getX() + d1, pPos.getY() + d3, pPos.getZ() + d5, d6, d7, d8);
+
+            }
         }
     }
 

@@ -2,12 +2,12 @@ package com.kokuxmilsch.celestialaltar.block.entity;
 
 import com.kokuxmilsch.celestialaltar.CelestialAltar;
 import com.kokuxmilsch.celestialaltar.block.AltarBlock;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
@@ -118,6 +118,7 @@ public class AltarBlockEntity extends BlockEntity implements MenuProvider {
 
     public void activateAltar(BlockState pState) {
         active = true;
+        this.level.playSound(null, this.worldPosition, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.MASTER, 1f, 1.4f);
         this.level.setBlock(this.worldPosition, pState.setValue(ACTIVATED, true), 3);
     }
 
@@ -137,11 +138,15 @@ public class AltarBlockEntity extends BlockEntity implements MenuProvider {
         if(!active) {
             return;
         }
-        if(this.getBlockState().getBlock() instanceof AltarBlock) {
-            AltarBlock altarBlock = Objects.requireNonNull((AltarBlock) this.getBlockState().getBlock());
-            altarBlock.animate_destroy_multiblock = true;
-        }
         active = false;
+
+        if(this.level instanceof ServerLevel serverLevel) {
+
+            serverLevel.playSound(null, this.worldPosition, SoundEvents.RESPAWN_ANCHOR_DEPLETE.value(), SoundSource.MASTER, 1, 1.2f);
+            serverLevel.playSound(null, this.worldPosition, SoundEvents.BEACON_DEACTIVATE, SoundSource.MASTER, 1, 1.2f);
+            serverLevel.sendParticles(ParticleTypes.EXPLOSION_EMITTER, this.worldPosition.getX() + 0.5, this.worldPosition.getY() + 2.5, this.worldPosition.getZ() + 0.5, 1, 0, 0, 0, 0);
+
+        }
         this.level.setBlock(this.worldPosition, pBlockState.setValue(ACTIVATED, false), 3);
     }
 }
