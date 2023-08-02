@@ -3,6 +3,11 @@
   "item.cel_altar.sky_crystal_shard": "Sky Crystal Shard",
   "item.cel_altar.night_sky_crystal_shard": "Night Sky Crystal Shard",
   "item.cel_altar.enchanted_eye_of_ender": "Enchanted Eye of Ender",
+  "item.cel_altar.sunny_ritual": "Summon Clear Weather",
+  "item.cel_altar.rain_ritual": "Summon Rainy Weather",
+  "item.cel_altar.thunder_ritual": "Summon Thunderstorm",
+  "item.cel_altar.day_ritual": "Skip to Daytime",
+  "item.cel_altar.night_ritual": "Skip to Nighttime",
 
   "tooltip.cel_altar.enchanted_eye_of_ender": "Right-Click on a Celestial Altar to Activate it\u00A77",
 

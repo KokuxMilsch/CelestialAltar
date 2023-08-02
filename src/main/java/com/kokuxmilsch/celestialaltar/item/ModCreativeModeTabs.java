@@ -17,6 +17,11 @@ public class ModCreativeModeTabs {
             .icon(() -> ModBlocks.ALTAR.get().asItem().getDefaultInstance())
             .title(Component.translatable("creativetab.celestial_altar_tab"))
             .displayItems((pParameters, pOutput)-> {
+                pOutput.accept(ModItems.SUNNY_RITUAL.get());
+                pOutput.accept(ModItems.RAIN_RITUAL.get());
+                pOutput.accept(ModItems.THUNDER_RITUAL.get());
+                pOutput.accept(ModItems.DAY_RITUAL.get());
+                pOutput.accept(ModItems.NIGHT_RITUAL.get());
                 pOutput.accept(ModItems.LIGHTNING_STEEL.get());
                 pOutput.accept(ModItems.SKY_CRYSTAL_SHARD.get());
                 pOutput.accept(ModItems.NIGHT_SKY_CRYSTAL_SHARD.get());
