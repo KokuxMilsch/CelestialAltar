@@ -1,0 +1,11 @@
+{
+  "type": "cel_altar:celestial_altar_ritual",
+  "ingredients" : [
+    {
+      "item": "minecraft:white_bed"
+    }
+  ],
+  "output": {
+    "item": "cel_altar:day_ritual"
+  }
+}
