@@ -1,0 +1,11 @@
+{
+  "type": "cel_altar:celestial_altar_ritual",
+  "ingredients" : [
+    {
+      "item": "minecraft:sunflower"
+    }
+  ],
+  "output": {
+    "item": "cel_altar:sunny_ritual"
+  }
+}

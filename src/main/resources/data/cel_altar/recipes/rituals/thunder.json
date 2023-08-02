@@ -1,0 +1,11 @@
+{
+  "type": "cel_altar:celestial_altar_ritual",
+  "ingredients" : [
+    {
+      "item": "cel_altar:lightning_steel"
+    }
+  ],
+  "output": {
+    "item": "cel_altar:thunder_ritual"
+  }
+}
