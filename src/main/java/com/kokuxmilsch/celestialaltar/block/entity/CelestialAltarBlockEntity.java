@@ -5,6 +5,7 @@ import com.kokuxmilsch.celestialaltar.block.CelestialAltarBlock;
 import com.kokuxmilsch.celestialaltar.item.ModItems;
 import com.kokuxmilsch.celestialaltar.multiblock.Multiblock;
 import com.kokuxmilsch.celestialaltar.recipe.CelestialAltarRecipe;
+import com.kokuxmilsch.celestialaltar.recipe.ModRecipes;
 import com.kokuxmilsch.celestialaltar.screen.CelestialAltarMenu;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -195,7 +196,7 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
 
 
 
-        return recipe.isPresent() && this.glowStoneCharge >= 4;
+        return recipe.isPresent() && this.glowStoneCharge >= recipe.get().getGlowstone();
     }
 
     public static void resumeProgress(Level pLevel, BlockPos pPos, CelestialAltarBlockEntity pBlockEntity) {
@@ -216,6 +217,14 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
                 .getRecipeFor(CelestialAltarRecipe.Type.INSTANCE, inventory, pBlockEntity.level);
 
         pLevel.addFreshEntity(new ItemEntity(pLevel, pPos.getX(), pPos.getY()+1, pPos.getZ(), recipe.get().getResultItem(RegistryAccess.EMPTY)));
+
+        ItemStack crystalShard = recipe.get().getIngredients().get(1).getItems()[0];
+        if(crystalShard.is(ModItems.SKY_CRYSTAL_SHARD.get())) {
+            pBlockEntity.itemStackHandler.getStackInSlot(1).shrink(1);
+        } else {
+            pBlockEntity.itemStackHandler.getStackInSlot(2).shrink(1);
+        }
+
 
 
         Minecraft.getInstance().player.sendSystemMessage(Component.literal("finished Ritual!!!"));

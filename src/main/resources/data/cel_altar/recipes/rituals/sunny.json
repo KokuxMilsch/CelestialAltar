@@ -3,8 +3,12 @@
   "ingredients" : [
     {
       "item": "minecraft:sunflower"
+    },
+    {
+      "item": "cel_altar:sky_crystal_shard"
     }
   ],
+  "glowstoneCharges": 1,
   "output": {
     "item": "cel_altar:sunny_ritual"
   }

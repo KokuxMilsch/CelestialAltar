@@ -3,8 +3,12 @@
   "ingredients" : [
     {
       "item": "cel_altar:lightning_steel"
+    },
+    {
+      "item": "cel_altar:night_sky_crystal_shard"
     }
   ],
+  "glowstoneCharges": 1,
   "output": {
     "item": "cel_altar:thunder_ritual"
   }
