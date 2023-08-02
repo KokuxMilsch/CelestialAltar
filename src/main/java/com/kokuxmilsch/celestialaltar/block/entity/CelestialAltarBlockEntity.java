@@ -41,6 +41,7 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
     public static final int SLOTS = 4;
 
     public boolean active = false;
+    public int active_int = 0;
     private boolean structure_complete = false;
 
     private int progress = 0;
@@ -77,6 +78,7 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
                     case 2 -> CelestialAltarBlockEntity.this.hasSkyAccess;
                     case 3 -> CelestialAltarBlockEntity.this.glowStoneCharge;
                     case 4 -> CelestialAltarBlockEntity.this.maxGlowStoneCharge;
+                    case 5 -> CelestialAltarBlockEntity.this.active_int;
                     default -> 0;
                 };
             }
@@ -92,7 +94,7 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
 
             @Override
             public int getCount() {
-                return 5;
+                return 6;
             }
         };
     }
@@ -160,7 +162,7 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
     }
 
     public static void tick(Level level, BlockPos blockPos, BlockState blockState, CelestialAltarBlockEntity pBlockEntity) {
-
+        pBlockEntity.active_int = pBlockEntity.active ? 1 : 0;
 
         pBlockEntity.validateMultiblock(level, blockPos);
 

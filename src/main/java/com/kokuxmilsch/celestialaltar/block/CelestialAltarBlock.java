@@ -49,31 +49,9 @@ public class CelestialAltarBlock extends BaseEntityBlock {
         pBuilder.add(ACTIVATED);
     }
 
+
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-        if(!pHand.equals(InteractionHand.OFF_HAND) && !pState.getValue(ACTIVATED)) {
-            ItemStack useItem = pPlayer.getItemInHand(pHand);
-            if(useItem.is(ModItems.ENCHANTED_EYE_OF_ENDER.get())) {
-                if(!pLevel.isClientSide) {
-                    BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-                    if (blockEntity instanceof CelestialAltarBlockEntity) {
-                        if (!((CelestialAltarBlockEntity) blockEntity).validMultiblock()) {
-                            return InteractionResult.FAIL;
-                        }
-                    } else {
-                        return InteractionResult.FAIL;
-                    }
-                    ((CelestialAltarBlockEntity) blockEntity).activateAltar(pState);
-                    useItem.shrink(1);
-                }
-                return InteractionResult.SUCCESS;
-            } else {
-                return InteractionResult.FAIL;
-            }
-
-
-        }
-
         if(!pLevel.isClientSide && pState.getValue(ACTIVATED)) {
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
             if(blockEntity instanceof CelestialAltarBlockEntity) {
@@ -82,9 +60,6 @@ public class CelestialAltarBlock extends BaseEntityBlock {
                 throw new IllegalStateException("Container provider is missing!");
             }
         }
-
-
-
         return InteractionResult.sidedSuccess(pLevel.isClientSide);
     }
 
@@ -135,7 +110,7 @@ public class CelestialAltarBlock extends BaseEntityBlock {
     @Override
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
         if(!pLevel.isClientSide) {
-            if (pState != pNewState) {
+            if (!pState.is(pNewState.getBlock())) {
                 BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
                 if (blockEntity instanceof CelestialAltarBlockEntity) {
                     ((CelestialAltarBlockEntity) blockEntity).dropItems();

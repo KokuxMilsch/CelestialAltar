@@ -2,12 +2,15 @@ package com.kokuxmilsch.celestialaltar.screen;
 
 import com.kokuxmilsch.celestialaltar.CelestialAltar;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraftforge.client.event.RenderTooltipEvent;
 
 public class CelestialAltarScreen extends AbstractContainerScreen<CelestialAltarMenu> {
 
@@ -42,5 +45,15 @@ public class CelestialAltarScreen extends AbstractContainerScreen<CelestialAltar
         renderBackground(pGuiGraphics);
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
         renderTooltip(pGuiGraphics, pMouseX, pMouseY);
+    }
+
+    @Override
+    protected void renderTooltip(GuiGraphics pGuiGraphics, int pX, int pY) {
+        super.renderTooltip(pGuiGraphics, pX, pY);
+        if(this.menu.isMultiblockActive()) {
+            pGuiGraphics.drawString(Minecraft.getInstance().font, "Altar is active", pX, pY, 0x00FF00);
+        } else {
+            pGuiGraphics.drawString(Minecraft.getInstance().font, "Multiblock Incomplete!", pX, pY, 0xFF0000);
+        }
     }
 }

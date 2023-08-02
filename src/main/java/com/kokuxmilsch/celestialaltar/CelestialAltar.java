@@ -60,20 +60,11 @@ public class CelestialAltar
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
-        //creative tabs
-        modEventBus.addListener(this::addCreative);
-
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
 
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
-    }
-
-    private void addCreative(BuildCreativeModeTabContentsEvent event) {
-        if(event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
-            event.accept(ModItems.LIGHTNING_STEEL);
-        }
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)

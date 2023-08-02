@@ -23,7 +23,7 @@ public class CelestialAltarMenu extends AbstractContainerMenu {
     private final ContainerData data;
 
     public CelestialAltarMenu(int id, Inventory inv, FriendlyByteBuf extraData) {
-        this(id, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(5));
+        this(id, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(6));
     }
 
     public CelestialAltarMenu(int id, Inventory inv, BlockEntity blockEntity, ContainerData data) {
@@ -101,6 +101,10 @@ public class CelestialAltarMenu extends AbstractContainerMenu {
 
     public boolean isCrafting() {
         return data.get(0) > 0;
+    }
+
+    public boolean isMultiblockActive() {
+        return this.data.get(5) == 1;
     }
 
     public int getScaledProgress() {
