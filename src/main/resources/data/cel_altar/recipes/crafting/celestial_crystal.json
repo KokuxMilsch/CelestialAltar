@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BAC",
+    "#P#",
+    "CAB"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "B": {
+      "item": "cel_altar:sky_crystal_shard"
+    },
+    "C": {
+      "item": "cel_altar:night_sky_crystal_shard"
+    },
+    "A": {
+      "item": "minecraft:end_crystal"
+    },
+    "P": {
+      "item": "minecraft:pearlescent_froglight"
+    }
+  },
+  "result": {
+    "item": "cel_altar:celestial_crystal",
+    "count": 1
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#DS",
+    "GFG",
+    "EBE"
+  ],
+  "key": {
+    "#": {
+      "item": "cel_altar:sky_crystal_shard"
+    },
+    "E": {
+      "item": "minecraft:echo_shard"
+    },
+    "D": {
+      "item": "minecraft:daylight_detector"
+    },
+    "S": {
+      "item": "cel_altar:night_sky_crystal_shard"
+    },
+    "G": {
+      "item": "minecraft:dragon_breath"
+    },
+    "F": {
+      "item": "minecraft:sculk_shrieker"
+    },
+    "B": {
+      "item": "minecraft:beacon"
+    }
+  },
+  "result": {
+    "item": "cel_altar:altar",
+    "count": 1
+  }
+}
