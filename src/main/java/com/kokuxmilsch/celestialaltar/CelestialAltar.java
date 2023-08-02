@@ -4,8 +4,11 @@ import com.kokuxmilsch.celestialaltar.block.ModBlocks;
 import com.kokuxmilsch.celestialaltar.block.entity.ModBlockEntities;
 import com.kokuxmilsch.celestialaltar.item.ModCreativeModeTabs;
 import com.kokuxmilsch.celestialaltar.item.ModItems;
+import com.kokuxmilsch.celestialaltar.screen.CelestialAltarScreen;
+import com.kokuxmilsch.celestialaltar.screen.ModMenuTypes;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.registries.Registries;
@@ -52,8 +55,7 @@ public class CelestialAltar
         ModCreativeModeTabs.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModBlockEntities.register(modEventBus);
-
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup); // clientSetup is the name of a method that i've created
+        ModMenuTypes.register(modEventBus);
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
@@ -72,10 +74,6 @@ public class CelestialAltar
         if(event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
             event.accept(ModItems.LIGHTNING_STEEL);
         }
-    }
-
-    private void clientSetup (final FMLClientSetupEvent event) {
-        ItemBlockRenderTypes.setRenderLayer(ModBlocks.ALTAR.get(), RenderType.cutout()); // Replace ModBlocks.INFUSER_BLOCK.get() with your block
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)
@@ -106,9 +104,8 @@ public class CelestialAltar
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {
-            // Some client setup code
-            LOGGER.info("HELLO FROM CLIENT SETUP");
-            LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.ALTAR.get(), RenderType.cutout());
+            MenuScreens.register(ModMenuTypes.CELESTIAL_ALTAR_MENU.get(), CelestialAltarScreen::new);
         }
     }
 }

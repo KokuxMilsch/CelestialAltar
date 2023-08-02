@@ -12,8 +12,8 @@ public class ModBlockEntities {
 
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, CelestialAltar.MODID);
 
-    public static final RegistryObject<BlockEntityType<AltarBlockEntity>> ALTAR_BLOCK_ENTITY = BLOCK_ENTITIES.register("celestial_altar_block_entity",
-            () -> BlockEntityType.Builder.of(AltarBlockEntity::new, ModBlocks.ALTAR.get()).build(null));
+    public static final RegistryObject<BlockEntityType<CelestialAltarBlockEntity>> ALTAR_BLOCK_ENTITY = BLOCK_ENTITIES.register("celestial_altar_block_entity",
+            () -> BlockEntityType.Builder.of(CelestialAltarBlockEntity::new, ModBlocks.ALTAR.get()).build(null));
 
 
 

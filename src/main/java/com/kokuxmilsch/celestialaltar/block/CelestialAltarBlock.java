@@ -1,6 +1,6 @@
 package com.kokuxmilsch.celestialaltar.block;
 
-import com.kokuxmilsch.celestialaltar.block.entity.AltarBlockEntity;
+import com.kokuxmilsch.celestialaltar.block.entity.CelestialAltarBlockEntity;
 import com.kokuxmilsch.celestialaltar.block.entity.ModBlockEntities;
 import com.kokuxmilsch.celestialaltar.item.ModItems;
 import net.minecraft.core.BlockPos;
@@ -31,7 +31,7 @@ import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
 
-public class AltarBlock extends BaseEntityBlock {
+public class CelestialAltarBlock extends BaseEntityBlock {
 
     public static final BooleanProperty ACTIVATED = BooleanProperty.create("activated");
     protected static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
@@ -39,7 +39,7 @@ public class AltarBlock extends BaseEntityBlock {
 
 
 
-    public AltarBlock(Properties pProperties) {
+    public CelestialAltarBlock(Properties pProperties) {
         super(pProperties);
         this.registerDefaultState(this.getStateDefinition().any().setValue(ACTIVATED, false));
     }
@@ -56,14 +56,14 @@ public class AltarBlock extends BaseEntityBlock {
             if(useItem.is(ModItems.ENCHANTED_EYE_OF_ENDER.get())) {
                 if(!pLevel.isClientSide) {
                     BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-                    if (blockEntity instanceof AltarBlockEntity) {
-                        if (!((AltarBlockEntity) blockEntity).validMultiblock()) {
+                    if (blockEntity instanceof CelestialAltarBlockEntity) {
+                        if (!((CelestialAltarBlockEntity) blockEntity).validMultiblock()) {
                             return InteractionResult.FAIL;
                         }
                     } else {
                         return InteractionResult.FAIL;
                     }
-                    ((AltarBlockEntity) blockEntity).activateAltar(pState);
+                    ((CelestialAltarBlockEntity) blockEntity).activateAltar(pState);
                     useItem.shrink(1);
                 }
                 return InteractionResult.SUCCESS;
@@ -74,10 +74,10 @@ public class AltarBlock extends BaseEntityBlock {
 
         }
 
-        if(!pLevel.isClientSide) {
+        if(!pLevel.isClientSide && pState.getValue(ACTIVATED)) {
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-            if(blockEntity instanceof AltarBlockEntity) {
-                NetworkHooks.openScreen(((ServerPlayer)pPlayer),(AltarBlockEntity) blockEntity, pPos);
+            if(blockEntity instanceof CelestialAltarBlockEntity) {
+                NetworkHooks.openScreen(((ServerPlayer)pPlayer),(CelestialAltarBlockEntity) blockEntity, pPos);
             } else {
                 throw new IllegalStateException("Container provider is missing!");
             }
@@ -100,28 +100,28 @@ public class AltarBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-        return new AltarBlockEntity(pPos, pState);
+        return new CelestialAltarBlockEntity(pPos, pState);
     }
 
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-        return pLevel.isClientSide ? null : createTickerHelper(pBlockEntityType, ModBlockEntities.ALTAR_BLOCK_ENTITY.get(), AltarBlockEntity::tick);
+        return pLevel.isClientSide ? null : createTickerHelper(pBlockEntityType, ModBlockEntities.ALTAR_BLOCK_ENTITY.get(), CelestialAltarBlockEntity::tick);
     }
 
     @Override
     public void animateTick(BlockState pState, Level pLevel, BlockPos pPos, RandomSource pRandom) {
         //Ambient Animation
         if(pState.getValue(ACTIVATED)) {
-            for(int i = 0; i < 20; ++i) {
-                double d1 = pRandom.nextGaussian() * 0.5D; //delta 1
-                double d3 = pRandom.nextGaussian() * 0.5D; //delta 2
-                double d5 = pRandom.nextGaussian() * 0.5D; //delta 3
-                double d6 = pRandom.nextGaussian() * 1;
-                double d7 = pRandom.nextGaussian() * 1;
-                double d8 = pRandom.nextGaussian() * 1;
+            for(int i = 0; i < 30; ++i) {
+                double d1 = pRandom.nextGaussian() * 0.3D; //delta 1
+                double d3 = pRandom.nextGaussian() * 0.1D; //delta 2
+                double d5 = pRandom.nextGaussian() * 0.3D; //delta 3
+                double d6 = pRandom.nextGaussian() * 0.4D; //Speed multiplier
+                double d7 = pRandom.nextGaussian() * 0.4D; //Speed multiplier
+                double d8 = pRandom.nextGaussian() * 0.4D; //Speed multiplier
 
-                pLevel.addParticle(ParticleTypes.ENCHANT, pPos.getX()+0.5D + d1, pPos.getY()+0.5D + d3, pPos.getZ()+0.5D + d5, d6, d7, d8);
+                pLevel.addParticle(ParticleTypes.ENCHANT, true,pPos.getX()+0.5D + d1, pPos.getY()+0.7D + d3, pPos.getZ()+0.5D + d5, d6, d7, d8);
 
             }
         }
@@ -134,10 +134,12 @@ public class AltarBlock extends BaseEntityBlock {
 
     @Override
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
-        if(pState != pNewState) {
-            BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-            if(blockEntity instanceof AltarBlockEntity) {
-                ((AltarBlockEntity) blockEntity).dropItems();
+        if(!pLevel.isClientSide) {
+            if (pState != pNewState) {
+                BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
+                if (blockEntity instanceof CelestialAltarBlockEntity) {
+                    ((CelestialAltarBlockEntity) blockEntity).dropItems();
+                }
             }
         }
         super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
