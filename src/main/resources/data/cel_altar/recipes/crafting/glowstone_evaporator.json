@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SLS",
+    "BRB",
+    "#E#"
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:sculk"
+    },
+    "S": {
+      "item": "minecraft:echo_shard"
+    },
+    "L": {
+      "item": "minecraft:lightning_rod"
+    },
+    "B": {
+      "item": "minecraft:blaze_powder"
+    },
+    "R": {
+      "item": "minecraft:respawn_anchor"
+    },
+    "E": {
+      "item": "cel_altar:enchanted_eye_of_ender"
+    }
+  },
+  "result": {
+    "item": "cel_altar:glowstone_evaporator",
+    "count": 1
+  }
+}

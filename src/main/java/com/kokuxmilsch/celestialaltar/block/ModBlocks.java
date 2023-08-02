@@ -2,7 +2,6 @@ package com.kokuxmilsch.celestialaltar.block;
 
 import com.kokuxmilsch.celestialaltar.CelestialAltar;
 import com.kokuxmilsch.celestialaltar.item.ModItems;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -20,9 +19,11 @@ public class ModBlocks {
 
 
 
-    public static final RegistryObject<Block> ALTAR = registerBlock("altar", () -> new AltarBlock(BlockBehaviour.Properties.copy(Blocks.SCULK_SHRIEKER)));
+    public static final RegistryObject<Block> ALTAR = registerBlock("altar", () -> new CelestialAltarBlock(BlockBehaviour.Properties.copy(Blocks.SCULK_SHRIEKER)));
 
-    public static final RegistryObject<Block> CELESTIAL_CRYSTAL = registerBlock("celestial_crystal", () -> new Block(BlockBehaviour.Properties.copy(Blocks.AMETHYST_BLOCK)));
+    public static final RegistryObject<Block> CELESTIAL_CRYSTAL = registerBlock("celestial_crystal", () -> new CelestialCrystalBlock(BlockBehaviour.Properties.copy(Blocks.AMETHYST_BLOCK)));
+
+    public static final RegistryObject<Block> GLOW_STONE_EVAPORATOR = registerBlock("glowstone_evaporator", () -> new GlowStoneEvaporatorBlock(BlockBehaviour.Properties.copy(Blocks.RESPAWN_ANCHOR)));
 
     private static <T extends Block>RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);

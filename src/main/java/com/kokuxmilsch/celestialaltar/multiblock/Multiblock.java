@@ -6,7 +6,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
-import java.util.*;
 
 public class Multiblock {
 
@@ -66,10 +65,10 @@ public class Multiblock {
             new BlockEntry(2, 1, -2, Blocks.DEEPSLATE_BRICK_WALL),
             new BlockEntry(-2,1, 2, Blocks.DEEPSLATE_BRICK_WALL),
             new BlockEntry(-2,1, -2, Blocks.DEEPSLATE_BRICK_WALL),
-            new BlockEntry(2, 2, 2, Blocks.RESPAWN_ANCHOR),
-            new BlockEntry(2, 2, -2, Blocks.RESPAWN_ANCHOR),
-            new BlockEntry(-2,2, 2, Blocks.RESPAWN_ANCHOR),
-            new BlockEntry(-2,2, -2, Blocks.RESPAWN_ANCHOR),
+            new BlockEntry(2, 2, 2, ModBlocks.GLOW_STONE_EVAPORATOR.get()),
+            new BlockEntry(2, 2, -2, ModBlocks.GLOW_STONE_EVAPORATOR.get()),
+            new BlockEntry(-2,2, 2, ModBlocks.GLOW_STONE_EVAPORATOR.get()),
+            new BlockEntry(-2,2, -2, ModBlocks.GLOW_STONE_EVAPORATOR.get()),
             new BlockEntry(2, 3, 2, Blocks.END_ROD),
             new BlockEntry(2, 3, -2, Blocks.END_ROD),
             new BlockEntry(-2,3, 2, Blocks.END_ROD),
