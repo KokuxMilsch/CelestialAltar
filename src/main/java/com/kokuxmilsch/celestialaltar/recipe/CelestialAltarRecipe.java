@@ -51,6 +51,10 @@ public class CelestialAltarRecipe implements Recipe<SimpleContainer> {
 
     @Override
     public ItemStack getResultItem(RegistryAccess pRegistryAccess) {
+        return getResultItem();
+    }
+
+    public ItemStack getResultItem() {
         return output.copy();
     }
 

@@ -48,12 +48,12 @@ public class CelestialAltarScreen extends AbstractContainerScreen<CelestialAltar
     }
 
     @Override
-    protected void renderTooltip(GuiGraphics pGuiGraphics, int pX, int pY) {
-        super.renderTooltip(pGuiGraphics, pX, pY);
+    protected void renderLabels(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY) {
+        super.renderLabels(pGuiGraphics, pMouseX, pMouseY);
         if(this.menu.isMultiblockActive()) {
-            pGuiGraphics.drawString(Minecraft.getInstance().font, "Altar is active", pX, pY, 0x00FF00);
+            pGuiGraphics.drawString(Minecraft.getInstance().font, "Altar is active", 12, 80, 0x00FF00);
         } else {
-            pGuiGraphics.drawString(Minecraft.getInstance().font, "Multiblock Incomplete!", pX, pY, 0xFF0000);
+            pGuiGraphics.drawString(Minecraft.getInstance().font, "Multiblock Incomplete!", 12, 80, 0xFF0000);
         }
     }
 }
