@@ -4,6 +4,7 @@ import com.kokuxmilsch.celestialaltar.block.ModBlocks;
 import com.kokuxmilsch.celestialaltar.block.entity.ModBlockEntities;
 import com.kokuxmilsch.celestialaltar.item.ModCreativeModeTabs;
 import com.kokuxmilsch.celestialaltar.item.ModItems;
+import com.kokuxmilsch.celestialaltar.recipe.ModRecipes;
 import com.kokuxmilsch.celestialaltar.screen.CelestialAltarScreen;
 import com.kokuxmilsch.celestialaltar.screen.ModMenuTypes;
 import com.mojang.logging.LogUtils;
@@ -56,6 +57,7 @@ public class CelestialAltar
         ModBlocks.register(modEventBus);
         ModBlockEntities.register(modEventBus);
         ModMenuTypes.register(modEventBus);
+        ModRecipes.register(modEventBus);
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);

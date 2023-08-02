@@ -4,11 +4,12 @@ import com.kokuxmilsch.celestialaltar.CelestialAltar;
 import com.kokuxmilsch.celestialaltar.block.CelestialAltarBlock;
 import com.kokuxmilsch.celestialaltar.item.ModItems;
 import com.kokuxmilsch.celestialaltar.multiblock.Multiblock;
+import com.kokuxmilsch.celestialaltar.recipe.CelestialAltarRecipe;
 import com.kokuxmilsch.celestialaltar.screen.CelestialAltarMenu;
-import com.kokuxmilsch.celestialaltar.screen.CelestialAltarScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
@@ -18,6 +19,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -32,8 +34,9 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 
 public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvider {
@@ -183,7 +186,16 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
     }
 
     public boolean hasRecipe() {
-        return this.itemStackHandler.getStackInSlot(3).is(ModItems.LIGHTNING_STEEL.get()) && this.glowStoneCharge >= 4;
+        SimpleContainer inventory = new SimpleContainer(this.itemStackHandler.getSlots());
+        for (int i = 0; i < this.itemStackHandler.getSlots(); i++) {
+            inventory.setItem(i, this.itemStackHandler.getStackInSlot(i));
+        }
+
+        Optional<CelestialAltarRecipe> recipe = this.level.getRecipeManager().getRecipeFor(CelestialAltarRecipe.Type.INSTANCE, inventory, this.level);
+
+
+
+        return recipe.isPresent() && this.glowStoneCharge >= 4;
     }
 
     public static void resumeProgress(Level pLevel, BlockPos pPos, CelestialAltarBlockEntity pBlockEntity) {
@@ -195,6 +207,17 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
     }
 
     public static void finishRitual(Level pLevel, BlockPos pPos, CelestialAltarBlockEntity pBlockEntity) {
+        SimpleContainer inventory = new SimpleContainer(pBlockEntity.itemStackHandler.getSlots());
+        for (int i = 0; i < pBlockEntity.itemStackHandler.getSlots(); i++) {
+            inventory.setItem(i, pBlockEntity.itemStackHandler.getStackInSlot(i));
+        }
+
+        Optional<CelestialAltarRecipe> recipe = pBlockEntity.level.getRecipeManager()
+                .getRecipeFor(CelestialAltarRecipe.Type.INSTANCE, inventory, pBlockEntity.level);
+
+        pLevel.addFreshEntity(new ItemEntity(pLevel, pPos.getX(), pPos.getY()+1, pPos.getZ(), recipe.get().getResultItem(RegistryAccess.EMPTY)));
+
+
         Minecraft.getInstance().player.sendSystemMessage(Component.literal("finished Ritual!!!"));
         pBlockEntity.itemStackHandler.getStackInSlot(3).shrink(1);
         pBlockEntity.resetProgress();
@@ -227,6 +250,9 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
     public void validateMultiblock(Level pLevel, BlockPos pBlockPos) {
         if (Multiblock.scanMultiblock(Multiblock.CELESTIAL_ALTAR_MULTIBLOCK, pBlockPos, pLevel)) {
             this.structure_complete = true;
+            if(!this.active) {
+                activateAltar(pLevel.getBlockState(pBlockPos));
+            }
             return;
         }
         this.structure_complete = false;

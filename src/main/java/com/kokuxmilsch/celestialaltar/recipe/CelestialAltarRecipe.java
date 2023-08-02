@@ -8,34 +8,39 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
-public class CelestialAltarRecipe implements Recipe<Container> {
-
+public class CelestialAltarRecipe implements Recipe<SimpleContainer> {
     private final ResourceLocation id;
     private final ItemStack output;
     private final NonNullList<Ingredient> recipeItems;
 
-    public CelestialAltarRecipe(ResourceLocation id, ItemStack output,
-                                    NonNullList<Ingredient> recipeItems) {
+    public CelestialAltarRecipe(ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems) {
         this.id = id;
         this.output = output;
         this.recipeItems = recipeItems;
     }
+
     @Override
-    public boolean matches(Container pContainer, Level pLevel) {
-        if(pLevel.isClientSide) {
+    public boolean matches(SimpleContainer pContainer, Level pLevel) {
+        if(pLevel.isClientSide()) {
             return false;
         }
+
         return recipeItems.get(0).test(pContainer.getItem(3));
     }
 
     @Override
-    public ItemStack assemble(Container pContainer, RegistryAccess pRegistryAccess) {
+    public NonNullList<Ingredient> getIngredients() {
+        return recipeItems;
+    }
+
+    @Override
+    public ItemStack assemble(SimpleContainer pContainer, RegistryAccess pRegistryAccess) {
         return output;
     }
 
@@ -61,7 +66,7 @@ public class CelestialAltarRecipe implements Recipe<Container> {
 
     @Override
     public RecipeType<?> getType() {
-        return null;
+        return Type.INSTANCE;
     }
 
     public static class Type implements RecipeType<CelestialAltarRecipe> {
@@ -69,6 +74,7 @@ public class CelestialAltarRecipe implements Recipe<Container> {
         public static final Type INSTANCE = new Type();
         public static final String ID = "celestial_altar_ritual";
     }
+
 
     public static class Serializer implements RecipeSerializer<CelestialAltarRecipe> {
         public static final Serializer INSTANCE = new Serializer();
@@ -88,27 +94,26 @@ public class CelestialAltarRecipe implements Recipe<Container> {
             return new CelestialAltarRecipe(pRecipeId, output, inputs);
         }
 
-        @Nullable
         @Override
-        public CelestialAltarRecipe fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf pBuffer) {
-            NonNullList<Ingredient> inputs = NonNullList.withSize(pBuffer.readInt(), Ingredient.EMPTY);
+        public @Nullable CelestialAltarRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
+            NonNullList<Ingredient> inputs = NonNullList.withSize(buf.readInt(), Ingredient.EMPTY);
 
             for (int i = 0; i < inputs.size(); i++) {
-                inputs.set(i, Ingredient.fromNetwork(pBuffer));
+                inputs.set(i, Ingredient.fromNetwork(buf));
             }
 
-            ItemStack output = pBuffer.readItem();
-            return new CelestialAltarRecipe(pRecipeId, output, inputs);
+            ItemStack output = buf.readItem();
+            return new CelestialAltarRecipe(id, output, inputs);
         }
 
         @Override
-        public void toNetwork(FriendlyByteBuf pBuffer, CelestialAltarRecipe pRecipe) {
-            pBuffer.writeInt(pRecipe.getIngredients().size());
+        public void toNetwork(FriendlyByteBuf buf, CelestialAltarRecipe recipe) {
+            buf.writeInt(recipe.getIngredients().size());
 
-            for (Ingredient ing : pRecipe.getIngredients()) {
-                ing.toNetwork(pBuffer);
+            for (Ingredient ing : recipe.getIngredients()) {
+                ing.toNetwork(buf);
             }
-            pBuffer.writeItemStack(pRecipe.getResultItem(RegistryAccess.EMPTY), false);
+            buf.writeItemStack(recipe.getResultItem(RegistryAccess.EMPTY), false);
         }
     }
 }

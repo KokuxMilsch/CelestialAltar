@@ -52,7 +52,7 @@ public class CelestialAltarBlock extends BaseEntityBlock {
 
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-        if(!pLevel.isClientSide && pState.getValue(ACTIVATED)) {
+        if(!pLevel.isClientSide) {
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
             if(blockEntity instanceof CelestialAltarBlockEntity) {
                 NetworkHooks.openScreen(((ServerPlayer)pPlayer),(CelestialAltarBlockEntity) blockEntity, pPos);
