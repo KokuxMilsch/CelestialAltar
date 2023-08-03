@@ -1,10 +1,15 @@
 package com.kokuxmilsch.celestialaltar.integration.jei;
 
 import com.kokuxmilsch.celestialaltar.CelestialAltar;
+import com.kokuxmilsch.celestialaltar.block.ModBlocks;
+import com.kokuxmilsch.celestialaltar.item.ModItems;
 import com.kokuxmilsch.celestialaltar.recipe.CelestialAltarRecipe;
+import com.kokuxmilsch.celestialaltar.screen.CelestialAltarScreen;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.registration.IGuiHandlerRegistration;
+import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.client.Minecraft;
@@ -35,5 +40,15 @@ public class JEICelestialAltarModPlugin implements IModPlugin {
 
         List<CelestialAltarRecipe> ritual_recipes = rm.getAllRecipesFor(CelestialAltarRecipe.Type.INSTANCE);
         registration.addRecipes(CELESTIAL_RITUAL_TYPE, ritual_recipes);
+    }
+
+    @Override
+    public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
+        registration.addRecipeCatalyst(ModBlocks.ALTAR.get().asItem().getDefaultInstance(), CELESTIAL_RITUAL_TYPE);
+    }
+
+    @Override
+    public void registerGuiHandlers(IGuiHandlerRegistration registration) {
+        registration.addRecipeClickArea(CelestialAltarScreen.class, 82, 26, 10, 24, CELESTIAL_RITUAL_TYPE);
     }
 }
