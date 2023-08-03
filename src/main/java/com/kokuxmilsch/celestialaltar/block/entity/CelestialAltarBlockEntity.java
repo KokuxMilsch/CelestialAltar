@@ -17,6 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
@@ -28,8 +29,10 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
@@ -49,10 +52,14 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
     private boolean structure_complete = false;
 
     private int progress = 0;
-    private final int maxProgress = 100;
+    private final int maxProgress = 400;
     private int hasSkyAccess = 1;
     private int glowStoneCharge = 0;
     private final int maxGlowStoneCharge = 16;
+
+    private SimpleContainer craftingInventory;
+
+    public static final int preRitualProgressTime = 100;
 
 
     private final ItemStackHandler itemStackHandler = new ItemStackHandler(SLOTS) {
@@ -170,16 +177,16 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
 
         pBlockEntity.validateMultiblock(level, blockPos);
 
-
         if(pBlockEntity.validMultiblock()) {
-            //Process Events
-            pBlockEntity.chargeGlowStone();
-
-            if(pBlockEntity.hasRecipe() && pBlockEntity.progress <= pBlockEntity.maxProgress) {
-                resumeProgress(level, blockPos, pBlockEntity);
-            } else {
-                pBlockEntity.resetProgress();
+            if(pBlockEntity.checkForClearSky(blockPos)) {
+                //Process Events
+                if (pBlockEntity.hasRecipe() && pBlockEntity.progress <= pBlockEntity.maxProgress) {
+                    resumeProgress(level, blockPos, pBlockEntity);
+                } else {
+                    pBlockEntity.resetProgress();
+                }
             }
+            pBlockEntity.chargeGlowStone();
 
         } else {
             pBlockEntity.destroyMultiblock(blockState);
@@ -187,46 +194,52 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
     }
 
     public boolean hasRecipe() {
-        SimpleContainer inventory = new SimpleContainer(this.itemStackHandler.getSlots());
-        for (int i = 0; i < this.itemStackHandler.getSlots(); i++) {
-            inventory.setItem(i, this.itemStackHandler.getStackInSlot(i));
-        }
-
-        Optional<CelestialAltarRecipe> recipe = this.level.getRecipeManager().getRecipeFor(CelestialAltarRecipe.Type.INSTANCE, inventory, this.level);
-
-
-
+        Optional<CelestialAltarRecipe> recipe = this.getRecipe();
         return recipe.isPresent() && this.glowStoneCharge >= recipe.get().getGlowstone();
     }
 
     public static void resumeProgress(Level pLevel, BlockPos pPos, CelestialAltarBlockEntity pBlockEntity) {
         //
         pBlockEntity.progress++;
+        if(pBlockEntity.progress == preRitualProgressTime) {
+            submitItems((ServerLevel) pLevel, pPos, pBlockEntity);
+        }
         if(pBlockEntity.progress >= pBlockEntity.maxProgress) {
             finishRitual(pLevel, pPos, pBlockEntity);
         }
     }
 
-    public static void finishRitual(Level pLevel, BlockPos pPos, CelestialAltarBlockEntity pBlockEntity) {
-        SimpleContainer inventory = new SimpleContainer(pBlockEntity.itemStackHandler.getSlots());
+    public static void submitItems(ServerLevel pLevel, BlockPos pPos, CelestialAltarBlockEntity pBlockEntity) {
+        pBlockEntity.craftingInventory = new SimpleContainer(pBlockEntity.itemStackHandler.getSlots());
         for (int i = 0; i < pBlockEntity.itemStackHandler.getSlots(); i++) {
-            inventory.setItem(i, pBlockEntity.itemStackHandler.getStackInSlot(i));
+            pBlockEntity.craftingInventory.setItem(i, pBlockEntity.itemStackHandler.getStackInSlot(i).copy());
         }
-
-        Optional<CelestialAltarRecipe> recipe = pBlockEntity.level.getRecipeManager()
-                .getRecipeFor(CelestialAltarRecipe.Type.INSTANCE, inventory, pBlockEntity.level);
-
-        pLevel.addFreshEntity(new ItemEntity(pLevel, pPos.getX(), pPos.getY()+1, pPos.getZ(), recipe.get().getResultItem(RegistryAccess.EMPTY)));
-
-
-
-        pBlockEntity.itemStackHandler.getStackInSlot(1).shrink(1);
-
-
-        Minecraft.getInstance().player.sendSystemMessage(Component.literal("finished Ritual!!!"));
+        Optional<CelestialAltarRecipe> recipe = pBlockEntity.getRecipe();
         pBlockEntity.itemStackHandler.getStackInSlot(2).shrink(1);
-        pBlockEntity.resetProgress();
+        pBlockEntity.itemStackHandler.getStackInSlot(1).shrink(1);
         pBlockEntity.glowStoneCharge = pBlockEntity.glowStoneCharge-recipe.get().getGlowstone();
+        pLevel.playSound(null, pPos, SoundEvents.FIRECHARGE_USE, SoundSource.MASTER, 1, 1);
+        pLevel.sendParticles(ParticleTypes.FLAME, pPos.getX(), pPos.getY()+1, pPos.getZ(), 10, 0.2, 0.2, 0.2, 0);
+    }
+
+    public Optional<CelestialAltarRecipe> getRecipe() {
+        SimpleContainer inventory;
+        if(this.progress < preRitualProgressTime) {
+            inventory = new SimpleContainer(this.itemStackHandler.getSlots());
+            for (int i = 0; i < this.itemStackHandler.getSlots(); i++) {
+                inventory.setItem(i, this.itemStackHandler.getStackInSlot(i));
+            }
+        } else {
+            inventory = this.craftingInventory;
+        }
+        return this.level.getRecipeManager().getRecipeFor(CelestialAltarRecipe.Type.INSTANCE, inventory, this.level);
+    }
+
+    public static void finishRitual(Level pLevel, BlockPos pPos, CelestialAltarBlockEntity pBlockEntity) {
+        Optional<CelestialAltarRecipe> recipe = pBlockEntity.getRecipe();
+        pLevel.addFreshEntity(new ItemEntity(pLevel, pPos.getX(), pPos.getY()+1, pPos.getZ(), recipe.get().getResultItem(RegistryAccess.EMPTY)));
+        Minecraft.getInstance().player.sendSystemMessage(Component.literal("finished Ritual!!!"));
+        pBlockEntity.resetProgress();
     }
 
     public void resetProgress() {
@@ -265,6 +278,18 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
 
     public boolean validMultiblock() {
         return this.structure_complete;
+    }
+
+    public boolean checkForClearSky(BlockPos pPos) {
+        BlockPos pos = pPos.above(1); //start above the celestial crystal
+        for (int i = 0; i < (this.level.getHeight(Heightmap.Types.WORLD_SURFACE, pos.getX(), pos.getZ())-pos.getY())-1; i++) {
+            if(!this.level.getBlockState(pos.above(i)).is(Blocks.AIR)) {
+                this.hasSkyAccess = 0;
+                return false;
+            }
+        }
+        this.hasSkyAccess = 1;
+        return true;
     }
 
     public void destroyMultiblock(BlockState pBlockState) {

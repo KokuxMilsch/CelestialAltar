@@ -60,12 +60,12 @@ public class CelestialAltarScreen extends AbstractContainerScreen<CelestialAltar
     protected void renderLabels(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY) {
         pGuiGraphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY-1, 0xf100ff, false);
         pGuiGraphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY+3, 4210752, false);
-        if(this.menu.isMultiblockActive()) {
+        if(this.menu.isMultiblockActive() && this.menu.hasSkyAccess()) {
             pGuiGraphics.drawString(Minecraft.getInstance().font, "Altar is active", 100, this.titleLabelY-1, 0x00FF00);
         } else if(this.menu.hasSkyAccess()){
             pGuiGraphics.drawString(Minecraft.getInstance().font, "Multiblock Incomplete!", 40, 35, 0xFF0000);
         } else {
-            pGuiGraphics.drawString(Minecraft.getInstance().font, "Altar needs have clear sky above it!", 25, 35, 0xFF0000);
+            pGuiGraphics.drawString(Minecraft.getInstance().font, "Altar needs clear sky above it!", 10, -10, 0xFF0000);
         }
     }
 }
