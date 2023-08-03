@@ -53,9 +53,9 @@ public class CelestialAltarRecipeCategory implements IRecipeCategory<CelestialAl
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, CelestialAltarRecipe recipe, IFocusGroup focuses) {
-        builder.addSlot(RecipeIngredientRole.INPUT, 80, 35).addIngredients(recipe.getIngredients().get(0));
-        builder.addInvisibleIngredients(RecipeIngredientRole.RENDER_ONLY);
-        builder.addSlot(RecipeIngredientRole.INPUT, 100, 35).addIngredients(recipe.getIngredients().get(1));
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 80, 0).addItemStack(recipe.getResultItem());
+        builder.addSlot(RecipeIngredientRole.INPUT, 80, 51).addIngredients(recipe.getIngredients().get(0));
+        builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 8, 51).setOverlay(icon, 0, 0);
+        builder.addSlot(RecipeIngredientRole.INPUT, 152, 51).addIngredients(recipe.getIngredients().get(1));
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 80, 7).addItemStack(recipe.getResultItem());
     }
 }

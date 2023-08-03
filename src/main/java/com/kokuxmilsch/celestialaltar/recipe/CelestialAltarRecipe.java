@@ -33,13 +33,7 @@ public class CelestialAltarRecipe implements Recipe<SimpleContainer> {
             return false;
         }
 
-        for (int i = 0; i < 2; i++) {
-            if(recipeItems.get(1).test(pContainer.getItem(1 + i))) {
-                return recipeItems.get(0).test(pContainer.getItem(3));
-            }
-        }
-
-        return false;
+        return recipeItems.get(0).test(pContainer.getItem(2)) && recipeItems.get(1).test(pContainer.getItem(1));
     }
 
     @Override

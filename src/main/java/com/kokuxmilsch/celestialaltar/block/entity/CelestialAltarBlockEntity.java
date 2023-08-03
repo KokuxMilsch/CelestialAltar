@@ -42,7 +42,7 @@ import java.util.Optional;
 
 public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvider {
 
-    public static final int SLOTS = 4;
+    public static final int SLOTS = 3;
 
     public boolean active = false;
     public int active_int = 0;
@@ -218,19 +218,15 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
 
         pLevel.addFreshEntity(new ItemEntity(pLevel, pPos.getX(), pPos.getY()+1, pPos.getZ(), recipe.get().getResultItem(RegistryAccess.EMPTY)));
 
-        ItemStack crystalShard = recipe.get().getIngredients().get(1).getItems()[0];
-        if(crystalShard.is(ModItems.SKY_CRYSTAL_SHARD.get())) {
-            pBlockEntity.itemStackHandler.getStackInSlot(1).shrink(1);
-        } else {
-            pBlockEntity.itemStackHandler.getStackInSlot(2).shrink(1);
-        }
 
+
+        pBlockEntity.itemStackHandler.getStackInSlot(1).shrink(1);
 
 
         Minecraft.getInstance().player.sendSystemMessage(Component.literal("finished Ritual!!!"));
-        pBlockEntity.itemStackHandler.getStackInSlot(3).shrink(1);
+        pBlockEntity.itemStackHandler.getStackInSlot(2).shrink(1);
         pBlockEntity.resetProgress();
-        pBlockEntity.glowStoneCharge = pBlockEntity.glowStoneCharge-4;
+        pBlockEntity.glowStoneCharge = pBlockEntity.glowStoneCharge-recipe.get().getGlowstone();
     }
 
     public void resetProgress() {

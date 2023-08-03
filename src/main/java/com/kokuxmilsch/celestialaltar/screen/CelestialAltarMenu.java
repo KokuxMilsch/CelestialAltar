@@ -39,9 +39,8 @@ public class CelestialAltarMenu extends AbstractContainerMenu {
 
         this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(handler -> {
             this.addSlot(new GlowStoneSlot(handler, 0, 8, 51));
-            this.addSlot(new SkyCrystalSlot(handler, 1, 152, 19));
-            this.addSlot(new NightSkyCrystalSlot(handler, 2, 152, 51));
-            this.addSlot(new SlotItemHandler(handler, 3, 80, 35));
+            this.addSlot(new SkyCrystalSlot(handler, 1, 152, 51));
+            this.addSlot(new SlotItemHandler(handler, 2, 80, 51));
         });
 
 
@@ -153,17 +152,7 @@ public class CelestialAltarMenu extends AbstractContainerMenu {
             return stack.is(Items.GLOWSTONE_DUST) || stack.is(Items.GLOWSTONE);
         }
     }
-    private static class NightSkyCrystalSlot extends SlotItemHandler {
 
-        public NightSkyCrystalSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
-            super(itemHandler, index, xPosition, yPosition);
-        }
-
-        @Override
-        public boolean mayPlace(@NotNull ItemStack stack) {
-            return stack.is(ModItems.NIGHT_SKY_CRYSTAL_SHARD.get());
-        }
-    }
     private static class SkyCrystalSlot extends SlotItemHandler {
 
         public SkyCrystalSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
@@ -172,7 +161,7 @@ public class CelestialAltarMenu extends AbstractContainerMenu {
 
         @Override
         public boolean mayPlace(@NotNull ItemStack stack) {
-            return stack.is(ModItems.SKY_CRYSTAL_SHARD.get());
+            return stack.is(ModItems.SKY_CRYSTAL_SHARD.get())  || stack.is(ModItems.NIGHT_SKY_CRYSTAL_SHARD.get());
         }
     }
 }

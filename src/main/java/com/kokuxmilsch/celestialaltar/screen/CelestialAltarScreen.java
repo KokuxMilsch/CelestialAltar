@@ -30,10 +30,10 @@ public class CelestialAltarScreen extends AbstractContainerScreen<CelestialAltar
 
         pGuiGraphics.blit(TEXTURE, x, y, 0, 0, imageWidth, imageHeight);
 
-        renderProgressArrow(pGuiGraphics, x, y);
+        renderProgressArrows(pGuiGraphics, x, y);
     }
 
-    private void renderProgressArrow(GuiGraphics pGuiGraphics, int x, int y) {
+    private void renderProgressArrows(GuiGraphics pGuiGraphics, int x, int y) {
         if(menu.isCrafting()) {
             pGuiGraphics.blit(TEXTURE,x + 15, y + 13, 3, 167, menu.getScaledProgress(), 4);
         }
