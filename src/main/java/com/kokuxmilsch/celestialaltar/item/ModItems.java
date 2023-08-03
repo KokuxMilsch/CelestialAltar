@@ -14,7 +14,7 @@ public class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, CelestialAltar.MODID);
 
 
-    public static final RegistryObject<Item> LIGHTNING_STEEL = ITEMS.register("lightning_steel", () -> new Item(new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> LIGHTNING_STEEL = ITEMS.register("lightning_steel", () -> new GlowingItem(new Item.Properties().rarity(Rarity.RARE)));
 
     public static final RegistryObject<Item> SKY_CRYSTAL_SHARD = ITEMS.register("sky_crystal_shard", () -> new GlowingItem(new Item.Properties().rarity(Rarity.EPIC)));
 
