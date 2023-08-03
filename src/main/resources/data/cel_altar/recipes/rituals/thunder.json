@@ -8,7 +8,7 @@
       "item": "cel_altar:night_sky_crystal_shard"
     }
   ],
-  "glowstoneCharges": 1,
+  "glowstoneCharges": 4,
   "output": {
     "item": "cel_altar:thunder_ritual"
   }
