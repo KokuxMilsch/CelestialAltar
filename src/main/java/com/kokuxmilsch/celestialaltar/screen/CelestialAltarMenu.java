@@ -99,7 +99,11 @@ public class CelestialAltarMenu extends AbstractContainerMenu {
     }
 
     public boolean isCrafting() {
-        return data.get(0) > 0;
+        return data.get(0) > CelestialAltarBlockEntity.preRitualProgressTime;
+    }
+
+    public boolean isPreCrafting() {
+        return data.get(0) > 0 && data.get(0) <= CelestialAltarBlockEntity.preRitualProgressTime;
     }
 
     public boolean isMultiblockActive() {
@@ -107,17 +111,25 @@ public class CelestialAltarMenu extends AbstractContainerMenu {
     }
 
     public int getScaledProgress() {
-        int progress = this.data.get(0);
-        int maxProgress = this.data.get(1);  // Max Progress
-        int progressBarSize = 150; // This is the width in pixels of your arrow
+        int progress = this.data.get(0)-CelestialAltarBlockEntity.preRitualProgressTime;
+        int maxProgress = this.data.get(1)-CelestialAltarBlockEntity.preRitualProgressTime;  // Max Progress
+        int progressBarSize = 22; // This is the height in pixels of your arrow
 
         return maxProgress != 0 && progress != 0 ? progress * progressBarSize / maxProgress : 0;
+    }
+
+    public int getScaledPreRitualProgress() {
+        int progress = this.data.get(0);
+        int maxProgress = CelestialAltarBlockEntity.preRitualProgressTime;  // Max Progress
+        int progressBarSize = 49; // This is the width in pixels of your arrow
+
+        return progress != 0 ? progress * progressBarSize / maxProgress : 0;
     }
 
     public int getScaledGlowStoneCharge() {
         int glowStoneCharge = this.data.get(3);
         int maxGlowStoneCharge = this.data.get(4);  // Max Progress
-        int progressBarSize = 150; // This is the width in pixels of your arrow
+        int progressBarSize = 32; // This is the height in pixels of your arrow
 
         return maxGlowStoneCharge != 0 && glowStoneCharge != 0 ? glowStoneCharge * progressBarSize / maxGlowStoneCharge : 0;
     }
@@ -139,6 +151,10 @@ public class CelestialAltarMenu extends AbstractContainerMenu {
         for (int i = 0; i < 9; ++i) {
             this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 142));
         }
+    }
+
+    public boolean hasSkyAccess() {
+        return this.data.get(2) == 1;
     }
 
     private static class GlowStoneSlot extends SlotItemHandler {
