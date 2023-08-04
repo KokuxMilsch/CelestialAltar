@@ -3,6 +3,7 @@ package com.kokuxmilsch.celestialaltar.recipe;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.kokuxmilsch.celestialaltar.CelestialAltar;
+import com.kokuxmilsch.celestialaltar.misc.RitualType;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
@@ -19,12 +20,14 @@ public class CelestialAltarRecipe implements Recipe<SimpleContainer> {
     private final ItemStack output;
     private final NonNullList<Ingredient> recipeItems;
     private final int glowStone;
+    private final RitualType ritual;
 
-    public CelestialAltarRecipe(ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems, int glowStone) {
+    public CelestialAltarRecipe(ResourceLocation id, ItemStack output, NonNullList<Ingredient> recipeItems, int glowStone, RitualType ritual) {
         this.id = id;
         this.output = output;
         this.recipeItems = recipeItems;
         this.glowStone = glowStone;
+        this.ritual = ritual;
     }
 
     @Override
@@ -43,6 +46,10 @@ public class CelestialAltarRecipe implements Recipe<SimpleContainer> {
 
     public int getGlowstone() {
         return this.glowStone;
+    }
+
+    public RitualType getRitualType() {
+        return this.ritual;
     }
 
     @Override
@@ -104,11 +111,21 @@ public class CelestialAltarRecipe implements Recipe<SimpleContainer> {
                 glowStone = 16;
             }
 
+            RitualType ritual = RitualType.EMPTY;
+            String ritualName = GsonHelper.getAsString(pSerializedRecipe, "ritual_type", "empty");
+            RitualType[] ritualTypes = RitualType.values();
+            for (int i = 0; i < ritualTypes.length; i++) {
+                if(ritualTypes[i].id.equals(ritualName)) {
+                    ritual = ritualTypes[i];
+                }
+            }
+
+
             for (int i = 0; i < inputs.size(); i++) {
                 inputs.set(i, Ingredient.fromJson(ingredients.get(i)));
             }
 
-            return new CelestialAltarRecipe(pRecipeId, output, inputs, glowStone);
+            return new CelestialAltarRecipe(pRecipeId, output, inputs, glowStone, ritual);
         }
 
         @Override
@@ -117,18 +134,21 @@ public class CelestialAltarRecipe implements Recipe<SimpleContainer> {
 
             int glowStone = buf.readByte();
 
+            RitualType ritual = buf.readEnum(RitualType.class);
+
             for (int i = 0; i < inputs.size(); i++) {
                 inputs.set(i, Ingredient.fromNetwork(buf));
             }
 
             ItemStack output = buf.readItem();
-            return new CelestialAltarRecipe(id, output, inputs, glowStone);
+            return new CelestialAltarRecipe(id, output, inputs, glowStone, ritual);
         }
 
         @Override
         public void toNetwork(FriendlyByteBuf buf, CelestialAltarRecipe recipe) {
             buf.writeInt(recipe.getIngredients().size());
             buf.writeByte(recipe.getGlowstone());
+            buf.writeEnum(recipe.getRitualType());
 
             for (Ingredient ing : recipe.getIngredients()) {
                 ing.toNetwork(buf);
