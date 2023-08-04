@@ -58,7 +58,7 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
     private boolean structure_complete = false;
 
     private int progress = 0;
-    private int ritualInInt = 0;
+    private int ritualInInt = RitualType.EMPTY.ordinal();
     public static final int maxProgress = 400;
     private int hasSkyAccess = 1;
     private int glowStoneCharge = 0;
@@ -206,6 +206,8 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
         if(recipe.isPresent()) {
             this.ritualInInt = recipe.get().getRitualType().ordinal();
             return (this.glowStoneCharge >= recipe.get().getGlowstone() || this.glowStoneChargeCrafting >= recipe.get().getGlowstone());
+        } else {
+            this.ritualInInt = RitualType.EMPTY.ordinal();
         }
         return false;
     }
@@ -247,7 +249,12 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
                 inventory.setItem(i, this.itemStackHandler.getStackInSlot(i));
             }
         } else {
-            inventory = this.craftingInventory;
+            if(this.craftingInventory != null) {
+                inventory = this.craftingInventory;
+            } else {
+                resetProgress();
+                return Optional.empty();
+            }
         }
         return this.level.getRecipeManager().getRecipeFor(CelestialAltarRecipe.Type.INSTANCE, inventory, this.level);
     }
@@ -320,7 +327,7 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
             playSound(pLevel, SoundEvents.ENDER_DRAGON_GROWL, pPos, 0.5f, 1f);
             playSound(pLevel, SoundEvents.BEACON_DEACTIVATE, pPos, 0.5f, 1f);
         }
-        if(progress >= 300 && progress < 320 && progress % 2 == 0) {
+        if(progress >= 300 && progress < 350 && progress % 2 == 0) {
             pLevel.sendParticles(ParticleTypes.SONIC_BOOM, pPos.getX()+0.5, pPos.getY()+0.5+(double)((progress-300)/2), pPos.getZ()+0.5, 2, 0, 0, 0, 1);
         }
         if(progress == 280) {
@@ -350,11 +357,11 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
         Optional<CelestialAltarRecipe> recipe = pBlockEntity.getRecipe();
         //pLevel.addFreshEntity(new ItemEntity(pLevel, pPos.getX(), pPos.getY()+1, pPos.getZ(), recipe.get().getResultItem(RegistryAccess.EMPTY)));
         switch (recipe.get().getRitualType()) {
-            case DAY -> pLevel.players().get(0).sendSystemMessage(Component.literal("DAYTIME"));
-            case NIGHT -> pLevel.players().get(0).sendSystemMessage(Component.literal("NIGHT"));
-            case SUNNY -> pLevel.setWeatherParameters(1000, 0, false, false);
-            case RAIN -> pLevel.setWeatherParameters(0, 1000, true, false);
-            case THUNDER -> pLevel.setWeatherParameters(0, 1000, true, true);
+            case DAY -> pLevel.setDayTime(1000);
+            case NIGHT -> pLevel.setDayTime(14000);
+            case SUNNY -> pLevel.setWeatherParameters(1500, 0, false, false);
+            case RAIN -> pLevel.setWeatherParameters(0, 1500, true, false);
+            case THUNDER -> pLevel.setWeatherParameters(0, 1500, true, true);
             case EMPTY -> pLevel.players().get(0).sendSystemMessage(Component.literal("Ritual does: ...........nothing."));
         }
     }
@@ -366,6 +373,7 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
 
     public void resetProgress() {
         this.progress = 0;
+        this.ritualInInt = RitualType.EMPTY.ordinal();
     }
 
     public void chargeGlowStone() {
@@ -419,6 +427,7 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
             return;
         }
         active = false;
+        this.resetProgress();
 
         if(this.level instanceof ServerLevel serverLevel) {
 

@@ -38,7 +38,7 @@ public class CelestialAltarScreen extends AbstractContainerScreen<CelestialAltar
 
     private void renderResultItem(GuiGraphics pGuiGraphics, int pX, int pY) {
         int x = pX+80;
-        int y = pY*7;
+        int y = pY+7;
         switch (menu.getRitualType()) {
             case SUNNY -> pGuiGraphics.renderItem(ModItems.SUNNY_RITUAL.get().getDefaultInstance(), x, y);
             case RAIN -> pGuiGraphics.renderItem(ModItems.RAIN_RITUAL.get().getDefaultInstance(), x, y);
