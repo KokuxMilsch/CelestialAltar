@@ -2,7 +2,10 @@ package com.kokuxmilsch.celestialaltar.block.entity;
 
 import com.kokuxmilsch.celestialaltar.CelestialAltar;
 import com.kokuxmilsch.celestialaltar.block.CelestialAltarBlock;
+import com.kokuxmilsch.celestialaltar.block.GlowStoneEvaporatorBlock;
+import com.kokuxmilsch.celestialaltar.block.ModBlocks;
 import com.kokuxmilsch.celestialaltar.item.ModItems;
+import com.kokuxmilsch.celestialaltar.misc.RitualType;
 import com.kokuxmilsch.celestialaltar.multiblock.Multiblock;
 import com.kokuxmilsch.celestialaltar.recipe.CelestialAltarRecipe;
 import com.kokuxmilsch.celestialaltar.recipe.ModRecipes;
@@ -11,10 +14,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.Vec3i;
+import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.ContainerHelper;
@@ -52,14 +58,15 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
     private boolean structure_complete = false;
 
     private int progress = 0;
-    private final int maxProgress = 400;
+    private int ritualInInt = 0;
+    public static final int maxProgress = 400;
     private int hasSkyAccess = 1;
     private int glowStoneCharge = 0;
-    private final int maxGlowStoneCharge = 16;
+    public static final int maxGlowStoneCharge = 16;
 
     private SimpleContainer craftingInventory;
 
-    public static final int preRitualProgressTime = 100;
+    public static final int preRitualProgressTime = 120;
 
 
     private final ItemStackHandler itemStackHandler = new ItemStackHandler(SLOTS) {
@@ -77,6 +84,7 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
     private LazyOptional<IItemHandler> lazyItemHandler;
 
     protected final ContainerData data;
+    private int glowStoneChargeCrafting = 0;
 
     public CelestialAltarBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(ModBlockEntities.ALTAR_BLOCK_ENTITY.get(), pPos, pBlockState);
@@ -85,10 +93,10 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
             public int get(int pIndex) {
                 return switch (pIndex) {
                     case 0 -> CelestialAltarBlockEntity.this.progress;
-                    case 1 -> CelestialAltarBlockEntity.this.maxProgress;
+                    case 1 -> CelestialAltarBlockEntity.this.ritualInInt;
                     case 2 -> CelestialAltarBlockEntity.this.hasSkyAccess;
                     case 3 -> CelestialAltarBlockEntity.this.glowStoneCharge;
-                    case 4 -> CelestialAltarBlockEntity.this.maxGlowStoneCharge;
+                    case 4 -> maxGlowStoneCharge;
                     case 5 -> CelestialAltarBlockEntity.this.active_int;
                     default -> 0;
                 };
@@ -180,8 +188,8 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
         if(pBlockEntity.validMultiblock()) {
             if(pBlockEntity.checkForClearSky(blockPos)) {
                 //Process Events
-                if (pBlockEntity.hasRecipe() && pBlockEntity.progress <= pBlockEntity.maxProgress) {
-                    resumeProgress(level, blockPos, pBlockEntity);
+                if (pBlockEntity.hasRecipe() && pBlockEntity.progress <= maxProgress) {
+                    resumeProgress((ServerLevel) level, blockPos, pBlockEntity);
                 } else {
                     pBlockEntity.resetProgress();
                 }
@@ -195,18 +203,26 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
 
     public boolean hasRecipe() {
         Optional<CelestialAltarRecipe> recipe = this.getRecipe();
-        return recipe.isPresent() && this.glowStoneCharge >= recipe.get().getGlowstone();
+        if(recipe.isPresent()) {
+            this.ritualInInt = recipe.get().getRitualType().ordinal();
+            return (this.glowStoneCharge >= recipe.get().getGlowstone() || this.glowStoneChargeCrafting >= recipe.get().getGlowstone());
+        }
+        return false;
     }
 
-    public static void resumeProgress(Level pLevel, BlockPos pPos, CelestialAltarBlockEntity pBlockEntity) {
+    public static void resumeProgress(ServerLevel pLevel, BlockPos pPos, CelestialAltarBlockEntity pBlockEntity) {
         //
         pBlockEntity.progress++;
         if(pBlockEntity.progress == preRitualProgressTime) {
-            submitItems((ServerLevel) pLevel, pPos, pBlockEntity);
+            submitItems(pLevel, pPos, pBlockEntity);
         }
-        if(pBlockEntity.progress >= pBlockEntity.maxProgress) {
-            finishRitual(pLevel, pPos, pBlockEntity);
+        if(pBlockEntity.progress >= maxProgress) {
+            finishRitual(pBlockEntity);
         }
+        if(pBlockEntity.progress == 320) {
+            changeWeatherOrTime(pLevel, pPos, pBlockEntity);
+        }
+        ritualAnimation(pLevel, pPos, pBlockEntity.progress);
     }
 
     public static void submitItems(ServerLevel pLevel, BlockPos pPos, CelestialAltarBlockEntity pBlockEntity) {
@@ -214,12 +230,13 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
         for (int i = 0; i < pBlockEntity.itemStackHandler.getSlots(); i++) {
             pBlockEntity.craftingInventory.setItem(i, pBlockEntity.itemStackHandler.getStackInSlot(i).copy());
         }
+        pBlockEntity.glowStoneChargeCrafting = pBlockEntity.glowStoneCharge;
         Optional<CelestialAltarRecipe> recipe = pBlockEntity.getRecipe();
         pBlockEntity.itemStackHandler.getStackInSlot(2).shrink(1);
         pBlockEntity.itemStackHandler.getStackInSlot(1).shrink(1);
         pBlockEntity.glowStoneCharge = pBlockEntity.glowStoneCharge-recipe.get().getGlowstone();
         pLevel.playSound(null, pPos, SoundEvents.FIRECHARGE_USE, SoundSource.MASTER, 1, 1);
-        pLevel.sendParticles(ParticleTypes.FLAME, pPos.getX(), pPos.getY()+1, pPos.getZ(), 10, 0.2, 0.2, 0.2, 0);
+        pLevel.sendParticles(ParticleTypes.FLAME, pPos.getX()+0.5, pPos.getY()+1.5, pPos.getZ()+0.5, 20, 0, 0, 0, 0);
     }
 
     public Optional<CelestialAltarRecipe> getRecipe() {
@@ -235,10 +252,115 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
         return this.level.getRecipeManager().getRecipeFor(CelestialAltarRecipe.Type.INSTANCE, inventory, this.level);
     }
 
-    public static void finishRitual(Level pLevel, BlockPos pPos, CelestialAltarBlockEntity pBlockEntity) {
+    public static void ritualAnimation(ServerLevel pLevel, BlockPos pPos, int progress) {
+        //max Progress = 400t
+        if(progress == 1) {
+            playSound(pLevel, SoundEvents.BEACON_POWER_SELECT, pPos, 0.8f, 2.5f);
+        }
+        if(progress == 30) {
+            pLevel.setBlock(pPos.offset(2, 2, 2), pLevel.getBlockState(pPos.offset(2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 1), 2);
+            pLevel.setBlock(pPos.offset(2, 2, -2), pLevel.getBlockState(pPos.offset(2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 1), 2);
+            pLevel.setBlock(pPos.offset(-2, 2, 2), pLevel.getBlockState(pPos.offset(-2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 1), 2);
+            pLevel.setBlock(pPos.offset(-2, 2, -2), pLevel.getBlockState(pPos.offset(-2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 1), 2);
+            playSound(pLevel, SoundEvents.RESPAWN_ANCHOR_CHARGE, pPos, 1f, 1f);
+        }
+        if(progress == 40) {
+            pLevel.setBlock(pPos.offset(2, 2, 2), pLevel.getBlockState(pPos.offset(2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 2), 2);
+            pLevel.setBlock(pPos.offset(2, 2, -2), pLevel.getBlockState(pPos.offset(2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 2), 2);
+            pLevel.setBlock(pPos.offset(-2, 2, 2), pLevel.getBlockState(pPos.offset(-2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 2), 2);
+            pLevel.setBlock(pPos.offset(-2, 2, -2), pLevel.getBlockState(pPos.offset(-2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 2), 2);
+            playSound(pLevel, SoundEvents.RESPAWN_ANCHOR_CHARGE, pPos, 1f, 1f);
+        }
+        if(progress == 50) {
+            pLevel.setBlock(pPos.offset(2, 2, 2), pLevel.getBlockState(pPos.offset(2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 3), 2);
+            pLevel.setBlock(pPos.offset(2, 2, -2), pLevel.getBlockState(pPos.offset(2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 3), 2);
+            pLevel.setBlock(pPos.offset(-2, 2, 2), pLevel.getBlockState(pPos.offset(-2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 3), 2);
+            pLevel.setBlock(pPos.offset(-2, 2, -2), pLevel.getBlockState(pPos.offset(-2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 3), 2);
+            playSound(pLevel, SoundEvents.RESPAWN_ANCHOR_CHARGE, pPos, 1f, 1f);
+        }
+        if(progress == 60) {
+            pLevel.setBlock(pPos.offset(2, 2, 2), pLevel.getBlockState(pPos.offset(2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 4), 2);
+            pLevel.setBlock(pPos.offset(2, 2, -2), pLevel.getBlockState(pPos.offset(2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 4), 2);
+            pLevel.setBlock(pPos.offset(-2, 2, 2), pLevel.getBlockState(pPos.offset(-2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 4), 2);
+            pLevel.setBlock(pPos.offset(-2, 2, -2), pLevel.getBlockState(pPos.offset(-2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 4), 2);
+            playSound(pLevel, SoundEvents.RESPAWN_ANCHOR_CHARGE, pPos, 1f, 1f);
+        }
+        if(progress > 60 && progress < 110) {
+            //beam animation
+            double increment = (double) Math.round((((double) (progress-60))*0.03333D)*100)/100;
+            BlockPos particlePos = pPos.offset(2, 4, 2);
+            pLevel.sendParticles(ParticleTypes.END_ROD, particlePos.getX()+0.5-increment, particlePos.getY()+(increment/2), particlePos.getZ()+0.5-increment, 1, 0, 0, 0, 0);
+
+            particlePos = pPos.offset(2, 4, -2);
+            pLevel.sendParticles(ParticleTypes.END_ROD, particlePos.getX()+0.5-increment, particlePos.getY()+(increment/2), particlePos.getZ()+0.5+increment, 1, 0, 0, 0, 0);
+
+            particlePos = pPos.offset(-2, 4, 2);
+            pLevel.sendParticles(ParticleTypes.END_ROD, particlePos.getX()+0.5+increment, particlePos.getY()+(increment/2), particlePos.getZ()+0.5-increment, 1, 0, 0, 0, 0);
+
+            particlePos = pPos.offset(-2, 4, -2);
+            pLevel.sendParticles(ParticleTypes.END_ROD, particlePos.getX()+0.5+increment, particlePos.getY()+(increment/2), particlePos.getZ()+0.5+increment, 1, 0, 0, 0, 0);
+
+            playSound(pLevel, SoundEvents.BEACON_POWER_SELECT, pPos, 2f, 1f);
+        }
+        if(progress == 120) {
+            playSound(pLevel, SoundEvents.BEACON_ACTIVATE, pPos, 1.2f, 3f);
+            pLevel.sendParticles(ParticleTypes.EXPLOSION, pPos.getX()+0.5, pPos.getY()+4.5, pPos.getZ()+0.5, 4, 0, 0, 0, 1);
+
+        }
+        if(progress >= 120 && progress <= 124) {
+            pLevel.sendParticles(ParticleTypes.FLASH, pPos.getX()+0.5, pPos.getY()+4.5, pPos.getZ()+0.5, 1, 0, 0, 0, 0);
+        }
+        if(progress == 125) {
+            playSound(pLevel, SoundEvents.BEACON_POWER_SELECT, pPos, 1f, 2.5f);
+            for (int i = 0; i < 10; i++) {
+                playSound(pLevel, SoundEvents.PORTAL_AMBIENT, pPos, 0.5f, 2f);
+            }
+        }
+        if(progress == 300) {
+            playSound(pLevel, SoundEvents.ENDER_DRAGON_GROWL, pPos, 0.5f, 1f);
+            playSound(pLevel, SoundEvents.BEACON_DEACTIVATE, pPos, 0.5f, 1f);
+        }
+        if(progress >= 300 && progress < 320 && progress % 2 == 0) {
+            pLevel.sendParticles(ParticleTypes.SONIC_BOOM, pPos.getX()+0.5, pPos.getY()+0.5+(double)((progress-300)/2), pPos.getZ()+0.5, 2, 0, 0, 0, 1);
+        }
+        if(progress == 280) {
+            for (int i = 0; i < 4; i++) {
+                playSound(pLevel, SoundEvents.BELL_RESONATE, pPos, 0.5f, 4);
+            }
+        }
+        if(progress == 399) {
+            playSound(pLevel, SoundEvents.RESPAWN_ANCHOR_SET_SPAWN, pPos, 2f, 1f);
+            playSound(pLevel, SoundEvents.BEACON_DEACTIVATE, pPos, 0.9f, 2f);
+            playSound(pLevel, SoundEvents.LIGHTNING_BOLT_THUNDER, pPos, 0.5f, 3f);
+            playSound(pLevel, SoundEvents.END_PORTAL_SPAWN, pPos, 0.5f, 3f);
+            pLevel.sendParticles(ParticleTypes.EXPLOSION_EMITTER, pPos.getX()+0.5, pPos.getY()+4.5, pPos.getZ()+0.5, 1, 0, 0, 0, 1);
+
+            pLevel.setBlock(pPos.offset(2, 2, 2), pLevel.getBlockState(pPos.offset(2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 0), 2);
+            pLevel.setBlock(pPos.offset(2, 2, -2), pLevel.getBlockState(pPos.offset(2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 0), 2);
+            pLevel.setBlock(pPos.offset(-2, 2, 2), pLevel.getBlockState(pPos.offset(-2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 0), 2);
+            pLevel.setBlock(pPos.offset(-2, 2, -2), pLevel.getBlockState(pPos.offset(-2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 0), 2);
+        }
+    }
+
+    public static void playSound(ServerLevel pLevel, SoundEvent soundEvent, BlockPos pPos, float pPitch, float pVolume) {
+        pLevel.playSound(null, pPos,soundEvent, SoundSource.AMBIENT, pVolume, pPitch);
+    }
+
+    public static void changeWeatherOrTime(ServerLevel pLevel, BlockPos pPos, CelestialAltarBlockEntity pBlockEntity) {
         Optional<CelestialAltarRecipe> recipe = pBlockEntity.getRecipe();
-        pLevel.addFreshEntity(new ItemEntity(pLevel, pPos.getX(), pPos.getY()+1, pPos.getZ(), recipe.get().getResultItem(RegistryAccess.EMPTY)));
-        Minecraft.getInstance().player.sendSystemMessage(Component.literal("finished Ritual!!!"));
+        //pLevel.addFreshEntity(new ItemEntity(pLevel, pPos.getX(), pPos.getY()+1, pPos.getZ(), recipe.get().getResultItem(RegistryAccess.EMPTY)));
+        switch (recipe.get().getRitualType()) {
+            case DAY -> pLevel.players().get(0).sendSystemMessage(Component.literal("DAYTIME"));
+            case NIGHT -> pLevel.players().get(0).sendSystemMessage(Component.literal("NIGHT"));
+            case SUNNY -> pLevel.setWeatherParameters(1000, 0, false, false);
+            case RAIN -> pLevel.setWeatherParameters(0, 1000, true, false);
+            case THUNDER -> pLevel.setWeatherParameters(0, 1000, true, true);
+            case EMPTY -> pLevel.players().get(0).sendSystemMessage(Component.literal("Ritual does: ...........nothing."));
+        }
+    }
+
+    public static void finishRitual(CelestialAltarBlockEntity pBlockEntity) {
+        pBlockEntity.glowStoneChargeCrafting = 0;
         pBlockEntity.resetProgress();
     }
 
@@ -248,7 +370,7 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
 
     public void chargeGlowStone() {
         ItemStack glowStone = this.itemStackHandler.getStackInSlot(0);
-        if(!glowStone.isEmpty() && this.glowStoneCharge < this.maxGlowStoneCharge) {
+        if(!glowStone.isEmpty() && this.glowStoneCharge < maxGlowStoneCharge) {
             if(glowStone.is(Items.GLOWSTONE_DUST)) {
                 this.glowStoneCharge++;
                 glowStone.shrink(1);
@@ -305,6 +427,10 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
             serverLevel.sendParticles(ParticleTypes.EXPLOSION_EMITTER, this.worldPosition.getX() + 0.5, this.worldPosition.getY() + 2.5, this.worldPosition.getZ() + 0.5, 1, 0, 0, 0, 0);
 
         }
+        this.level.setBlock(this.worldPosition.offset(2, 2, 2), this.level.getBlockState(this.worldPosition.offset(2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 0), 2);
+        this.level.setBlock(this.worldPosition.offset(2, 2, -2), this.level.getBlockState(this.worldPosition.offset(2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 0), 2);
+        this.level.setBlock(this.worldPosition.offset(-2, 2, 2), this.level.getBlockState(this.worldPosition.offset(-2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 0), 2);
+        this.level.setBlock(this.worldPosition.offset(-2, 2, -2), this.level.getBlockState(this.worldPosition.offset(-2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 0), 2);
         this.level.setBlock(this.worldPosition, pBlockState.setValue(CelestialAltarBlock.ACTIVATED, false), 3);
     }
 }
