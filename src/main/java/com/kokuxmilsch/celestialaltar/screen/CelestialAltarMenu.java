@@ -3,6 +3,7 @@ package com.kokuxmilsch.celestialaltar.screen;
 import com.kokuxmilsch.celestialaltar.block.ModBlocks;
 import com.kokuxmilsch.celestialaltar.block.entity.CelestialAltarBlockEntity;
 import com.kokuxmilsch.celestialaltar.item.ModItems;
+import com.kokuxmilsch.celestialaltar.misc.RitualType;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -112,10 +113,10 @@ public class CelestialAltarMenu extends AbstractContainerMenu {
 
     public int getScaledProgress() {
         int progress = this.data.get(0)-CelestialAltarBlockEntity.preRitualProgressTime;
-        int maxProgress = this.data.get(1)-CelestialAltarBlockEntity.preRitualProgressTime;  // Max Progress
+        int maxProgress = CelestialAltarBlockEntity.maxProgress-CelestialAltarBlockEntity.preRitualProgressTime;  // Max Progress
         int progressBarSize = 22; // This is the height in pixels of your arrow
 
-        return maxProgress != 0 && progress != 0 ? progress * progressBarSize / maxProgress : 0;
+        return progress != 0 ? progress * progressBarSize / maxProgress : 0;
     }
 
     public int getScaledPreRitualProgress() {
@@ -132,6 +133,10 @@ public class CelestialAltarMenu extends AbstractContainerMenu {
         int progressBarSize = 32; // This is the height in pixels of your arrow
 
         return maxGlowStoneCharge != 0 && glowStoneCharge != 0 ? glowStoneCharge * progressBarSize / maxGlowStoneCharge : 0;
+    }
+
+    public RitualType getRitualType() {
+        return RitualType.values()[data.get(1)];
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.kokuxmilsch.celestialaltar.screen;
 
 import com.kokuxmilsch.celestialaltar.CelestialAltar;
+import com.kokuxmilsch.celestialaltar.item.ModItems;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -10,14 +11,12 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 
 public class CelestialAltarScreen extends AbstractContainerScreen<CelestialAltarMenu> {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation(CelestialAltar.MODID, "/textures/gui/celestial_altar_gui.png");
-
-    int x;
-    int y;
 
     public CelestialAltarScreen(CelestialAltarMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -28,12 +27,26 @@ public class CelestialAltarScreen extends AbstractContainerScreen<CelestialAltar
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
-        x = (width - imageWidth) / 2;
-        y = (height - imageHeight) / 2;
+        int x = (width - imageWidth) / 2;
+        int y = (height - imageHeight) / 2;
 
         pGuiGraphics.blit(TEXTURE, x, y, 0, 0, imageWidth, imageHeight);
 
         renderProgressArrows(pGuiGraphics, x, y);
+        renderResultItem(pGuiGraphics, x, y);
+    }
+
+    private void renderResultItem(GuiGraphics pGuiGraphics, int pX, int pY) {
+        int x = pX+80;
+        int y = pY*7;
+        switch (menu.getRitualType()) {
+            case SUNNY -> pGuiGraphics.renderItem(ModItems.SUNNY_RITUAL.get().getDefaultInstance(), x, y);
+            case RAIN -> pGuiGraphics.renderItem(ModItems.RAIN_RITUAL.get().getDefaultInstance(), x, y);
+            case THUNDER -> pGuiGraphics.renderItem(ModItems.THUNDER_RITUAL.get().getDefaultInstance(), x, y);
+            case DAY -> pGuiGraphics.renderItem(ModItems.DAY_RITUAL.get().getDefaultInstance(), x, y);
+            case NIGHT -> pGuiGraphics.renderItem(ModItems.NIGHT_RITUAL.get().getDefaultInstance(), x, y);
+            case EMPTY -> pGuiGraphics.renderItem(Items.BARRIER.getDefaultInstance(), x, y);
+        }
     }
 
     private void renderProgressArrows(GuiGraphics pGuiGraphics, int x, int y) {
