@@ -11,5 +11,6 @@
   "glowstoneCharges": 3,
   "output": {
     "item": "cel_altar:night_ritual"
-  }
+  },
+  "ritual_type": "night"
 }

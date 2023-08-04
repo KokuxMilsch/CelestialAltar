@@ -11,5 +11,6 @@
   "glowstoneCharges": 2,
   "output": {
     "item": "cel_altar:rain_ritual"
-  }
+  },
+  "ritual_type": "rain"
 }

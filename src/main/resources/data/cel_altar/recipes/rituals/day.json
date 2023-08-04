@@ -11,5 +11,6 @@
   "glowstoneCharges": 1,
   "output": {
     "item": "cel_altar:day_ritual"
-  }
+  },
+  "ritual_type": "day"
 }

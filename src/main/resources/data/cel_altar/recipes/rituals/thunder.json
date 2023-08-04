@@ -11,5 +11,6 @@
   "glowstoneCharges": 4,
   "output": {
     "item": "cel_altar:thunder_ritual"
-  }
+  },
+  "ritual_type": "thunder"
 }
