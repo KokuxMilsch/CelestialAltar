@@ -1,7 +1,6 @@
-package com.kokuxmilsch.celestialaltar.screen;
+package com.kokuxmilsch.celestialaltar.client.screen;
 
 import com.kokuxmilsch.celestialaltar.CelestialAltar;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.common.extensions.IForgeMenuType;
