@@ -18,7 +18,7 @@ public class Multiblock {
             new BlockEntry(1, -1, 0, Blocks.SMOOTH_QUARTZ_STAIRS),
             new BlockEntry(1, -1, -1, Blocks.CRYING_OBSIDIAN),
             new BlockEntry(0, -1, 1, Blocks.SMOOTH_QUARTZ_STAIRS),
-            new BlockEntry(0, -1, 0, Blocks.BEACON),
+            new BlockEntry(0, -1, 0, Blocks.SCULK_CATALYST),
             new BlockEntry(0, -1, -1, Blocks.SMOOTH_QUARTZ_STAIRS),
             new BlockEntry(-1,-1, 1, Blocks.CRYING_OBSIDIAN),
             new BlockEntry(-1,-1, 0, Blocks.SMOOTH_QUARTZ_STAIRS),
