@@ -2,9 +2,8 @@ package com.kokuxmilsch.celestialaltar.integration.jei;
 
 import com.kokuxmilsch.celestialaltar.CelestialAltar;
 import com.kokuxmilsch.celestialaltar.block.ModBlocks;
-import com.kokuxmilsch.celestialaltar.item.ModItems;
 import com.kokuxmilsch.celestialaltar.recipe.CelestialAltarRecipe;
-import com.kokuxmilsch.celestialaltar.screen.CelestialAltarScreen;
+import com.kokuxmilsch.celestialaltar.client.screen.CelestialAltarScreen;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.recipe.RecipeType;
