@@ -1,0 +1,163 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "block/cube_all",
+	"textures": {
+		"particle": "cel_altar:block/celestial_crystal_core",
+		"all": "cel_altar:block/celestial_crystal"
+	},
+	"elements": [
+		{
+			"from": [10, 0, 0],
+			"to": [16, 7, 6],
+			"faces": {
+				"north": {"uv": [0, 0, 6, 7], "texture": "#all"},
+				"east": {"uv": [10, 0, 16, 7], "texture": "#all"},
+				"south": {"uv": [0, 0, 6, 7], "texture": "#all"},
+				"west": {"uv": [10, 0, 16, 7], "texture": "#all"},
+				"up": {"uv": [8, 2, 14, 8], "texture": "#all"},
+				"down": {"uv": [8, 8, 14, 14], "texture": "#all"}
+			}
+		},
+		{
+			"from": [10, 7, 3],
+			"to": [13, 13, 6],
+			"faces": {
+				"north": {"uv": [0, 0, 3, 6], "texture": "#all"},
+				"east": {"uv": [13, 0, 16, 6], "texture": "#all"},
+				"south": {"uv": [0, 0, 3, 6], "texture": "#all"},
+				"west": {"uv": [13, 0, 16, 6], "texture": "#all"},
+				"up": {"uv": [13, 0, 16, 3], "texture": "#all"},
+				"down": {"uv": [0, 0, 3, 3], "texture": "#all"}
+			}
+		},
+		{
+			"from": [10, 0, 10],
+			"to": [16, 7, 16],
+			"faces": {
+				"north": {"uv": [10, 0, 16, 7], "texture": "#all"},
+				"east": {"uv": [0, 0, 6, 7], "texture": "#all"},
+				"south": {"uv": [10, 0, 16, 7], "texture": "#all"},
+				"west": {"uv": [0, 0, 6, 7], "texture": "#all"},
+				"up": {"uv": [8, 8, 14, 14], "texture": "#all"},
+				"down": {"uv": [8, 2, 14, 8], "texture": "#all"}
+			}
+		},
+		{
+			"from": [10, 7, 10],
+			"to": [13, 13, 13],
+			"faces": {
+				"north": {"uv": [13, 0, 16, 6], "texture": "#all"},
+				"east": {"uv": [0, 0, 3, 6], "texture": "#all"},
+				"south": {"uv": [13, 0, 16, 6], "texture": "#all"},
+				"west": {"uv": [0, 0, 3, 6], "texture": "#all"},
+				"up": {"uv": [13, 13, 16, 16], "texture": "#all"},
+				"down": {"uv": [0, 0, 3, 3], "texture": "#all"}
+			}
+		},
+		{
+			"from": [0, 0, 0],
+			"to": [6, 7, 6],
+			"faces": {
+				"north": {"uv": [10, 0, 16, 7], "texture": "#all"},
+				"east": {"uv": [0, 0, 6, 7], "texture": "#all"},
+				"south": {"uv": [10, 0, 16, 7], "texture": "#all"},
+				"west": {"uv": [0, 0, 6, 7], "texture": "#all"},
+				"up": {"uv": [2, 2, 8, 8], "texture": "#all"},
+				"down": {"uv": [2, 8, 8, 14], "texture": "#all"}
+			}
+		},
+		{
+			"from": [3, 7, 3],
+			"to": [6, 13, 6],
+			"faces": {
+				"north": {"uv": [13, 0, 16, 6], "texture": "#all"},
+				"east": {"uv": [0, 0, 3, 6], "texture": "#all"},
+				"south": {"uv": [13, 0, 16, 6], "texture": "#all"},
+				"west": {"uv": [0, 0, 3, 6], "texture": "#all"},
+				"up": {"uv": [0, 0, 3, 3], "texture": "#all"},
+				"down": {"uv": [0, 0, 3, 3], "texture": "#all"}
+			}
+		},
+		{
+			"from": [0, 0, 10],
+			"to": [6, 7, 16],
+			"faces": {
+				"north": {"uv": [0, 0, 6, 7], "texture": "#all"},
+				"east": {"uv": [10, 0, 16, 7], "texture": "#all"},
+				"south": {"uv": [0, 0, 6, 7], "texture": "#all"},
+				"west": {"uv": [10, 0, 16, 7], "texture": "#all"},
+				"up": {"uv": [2, 2, 8, 8], "texture": "#all"},
+				"down": {"uv": [2, 2, 8, 8], "texture": "#all"}
+			}
+		},
+		{
+			"from": [3, 7, 10],
+			"to": [6, 13, 13],
+			"faces": {
+				"north": {"uv": [0, 0, 3, 6], "texture": "#all"},
+				"east": {"uv": [13, 0, 16, 6], "texture": "#all"},
+				"south": {"uv": [0, 0, 3, 6], "texture": "#all"},
+				"west": {"uv": [13, 0, 16, 6], "texture": "#all"},
+				"up": {"uv": [0, 13, 3, 16], "texture": "#all"},
+				"down": {"uv": [0, 0, 3, 3], "texture": "#all"}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [45, 45, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [45, 45, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"firstperson_righthand": {
+			"rotation": [0, 45, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"firstperson_lefthand": {
+			"rotation": [0, 45, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"ground": {
+			"rotation": [0, 0, 45],
+			"translation": [0, 5, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"gui": {
+			"rotation": [45, 45, -45],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"fixed": {
+			"translation": [0, 0, 0.5],
+			"scale": [0.5, 0.5, 0.5]
+		}
+	},
+	"groups": [
+		{
+			"name": "crystal_part_1",
+			"origin": [8, 8, 8],
+			"color": 0,
+			"children": [0, 1]
+		},
+		{
+			"name": "crystal_part_2",
+			"origin": [8, 8, 8],
+			"color": 0,
+			"children": [2, 3]
+		},
+		{
+			"name": "crystal_part_3",
+			"origin": [8, 8, 8],
+			"color": 0,
+			"children": [4, 5]
+		},
+		{
+			"name": "crystal_part_4",
+			"origin": [8, 8, 8],
+			"color": 0,
+			"children": [6, 7]
+		}
+	]
+}

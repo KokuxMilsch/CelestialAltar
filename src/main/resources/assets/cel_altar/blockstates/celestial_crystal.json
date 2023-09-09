@@ -1,7 +1,44 @@
 {
   "variants": {
-    "": {
-      "model": "cel_altar:block/celestial_crystal"
+    "part=top,activated=true,split=false": {
+      "model": "cel_altar:block/celestial_crystal/celestial_crystal_top"
+    },
+    "part=top,activated=true,split=true": {
+      "model": "cel_altar:block/celestial_crystal/celestial_crystal_top_split"
+    },
+    "part=top,activated=false,split=true": {
+      "model": "cel_altar:block/celestial_crystal/celestial_crystal_top_split"
+    },
+    "part=top,activated=false,split=false": {
+      "model": "cel_altar:block/celestial_crystal/celestial_crystal_top"
+    },
+
+
+    "part=middle,activated=true,split=false": {
+      "model": "cel_altar:block/celestial_crystal/celestial_crystal_middle"
+    },
+    "part=middle,activated=true,split=true": {
+      "model": "cel_altar:block/celestial_crystal/celestial_crystal_middle_split"
+    },
+    "part=middle,activated=false,split=true": {
+      "model": "cel_altar:block/celestial_crystal/celestial_crystal_middle_split"
+    },
+    "part=middle,activated=false,split=false": {
+      "model": "cel_altar:block/celestial_crystal/celestial_crystal_middle"
+    },
+
+
+    "part=bottom,activated=true,split=false": {
+      "model": "cel_altar:block/celestial_crystal/celestial_crystal_bottom"
+    },
+    "part=bottom,activated=true,split=true": {
+      "model": "cel_altar:block/celestial_crystal/celestial_crystal_bottom_split"
+    },
+    "part=bottom,activated=false,split=true": {
+      "model": "cel_altar:block/celestial_crystal/celestial_crystal_bottom_split"
+    },
+    "part=bottom,activated=false,split=false": {
+      "model": "cel_altar:block/celestial_crystal/celestial_crystal_bottom"
     }
   }
 }
