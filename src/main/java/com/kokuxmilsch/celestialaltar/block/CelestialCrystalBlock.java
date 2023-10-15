@@ -1,21 +1,18 @@
 package com.kokuxmilsch.celestialaltar.block;
 
-import com.ibm.icu.text.MessagePattern;
 import com.kokuxmilsch.celestialaltar.block.entity.CelestialCrystalBlockEntity;
 import com.kokuxmilsch.celestialaltar.block.entity.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -58,6 +55,33 @@ public class CelestialCrystalBlock extends BaseEntityBlock {
     public CelestialCrystalBlock(Properties pProperties) {
         super(pProperties);
         this.registerDefaultState(this.getStateDefinition().any().setValue(ACTIVATED, false).setValue(SPLIT, false).setValue(PART, CrystalParts.MIDDLE));
+    }
+
+    public void playerWillDestroy(Level pLevel, BlockPos pPos, BlockState pState, Player pPlayer) {
+        if (!pLevel.isClientSide && pPlayer.isCreative()) {
+            preventCreativeDropFromMiddlePart(pLevel, pPos, pState, pPlayer);
+        }
+
+        super.playerWillDestroy(pLevel, pPos, pState, pPlayer);
+    }
+
+    protected static void preventCreativeDropFromMiddlePart(Level pLevel, BlockPos pPos, BlockState pState, Player pPlayer) {
+        CrystalParts part = pState.getValue(PART);
+        if (part == CrystalParts.TOP) {
+            BlockPos blockpos = pPos.below();
+            BlockState blockStateBelow = pLevel.getBlockState(blockpos);
+            if (blockStateBelow.is(pState.getBlock()) && blockStateBelow.getValue(PART) == CrystalParts.MIDDLE) {
+                pLevel.setBlock(blockpos, Blocks.AIR.defaultBlockState(), 35);
+                pLevel.levelEvent(pPlayer, 2001, blockpos, Block.getId(Blocks.AIR.defaultBlockState()));
+            }
+        } else if(part == CrystalParts.BOTTOM) {
+            BlockPos blockPos = pPos.above();
+            BlockState blockStateAbove = pLevel.getBlockState(blockPos);
+            if (blockStateAbove.is(pState.getBlock()) && blockStateAbove.getValue(PART) == CrystalParts.MIDDLE) {
+                pLevel.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 35);
+                pLevel.levelEvent(pPlayer, 2001, blockPos, Block.getId(Blocks.AIR.defaultBlockState()));
+            }
+        }
     }
 
     @Override
