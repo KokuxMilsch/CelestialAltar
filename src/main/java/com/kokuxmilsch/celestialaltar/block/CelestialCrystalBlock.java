@@ -1,9 +1,12 @@
 package com.kokuxmilsch.celestialaltar.block;
 
+import com.ibm.icu.text.MessagePattern;
 import com.kokuxmilsch.celestialaltar.block.entity.CelestialCrystalBlockEntity;
 import com.kokuxmilsch.celestialaltar.block.entity.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -11,6 +14,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -62,17 +66,51 @@ public class CelestialCrystalBlock extends BaseEntityBlock {
     }
 
     @Override
+    public BlockState updateShape(BlockState pState, Direction pDirection, BlockState pNeighborState, LevelAccessor pLevel, BlockPos pCurrentPos, BlockPos pNeighborPos) {
+        if(pDirection.getAxis() == Direction.Axis.Y) {
+            return switch(pState.getValue(PART)) {
+                case BOTTOM -> (pDirection == Direction.UP) ?  ((pNeighborState.is(this) && pNeighborState.getValue(PART) == CrystalParts.MIDDLE) ? pState : Blocks.AIR.defaultBlockState()) : pState;
+
+                case MIDDLE -> (pNeighborState.is(this) && ((pNeighborState.getValue(PART) == CrystalParts.BOTTOM) || (pNeighborState.getValue(PART) == CrystalParts.TOP))) ? pState : Blocks.AIR.defaultBlockState();
+
+                case TOP -> (pDirection == Direction.DOWN) ?  ((pNeighborState.is(this) && pNeighborState.getValue(PART) == CrystalParts.MIDDLE) ? pState : Blocks.AIR.defaultBlockState()) : pState;
+            };
+        }
+        return super.updateShape(pState, pDirection, pNeighborState, pLevel, pCurrentPos, pNeighborPos);
+    }
+
+    @Override
     public boolean canSurvive(BlockState pState, LevelReader pLevel, BlockPos pPos) {
-        String part = pState.getValue(PART).getSerializedName();
-        if(part.matches("middle")) {
-            return !pLevel.getBlockState(pPos.below(1)).getValue(PART).getSerializedName().matches("bottom") || !pLevel.getBlockState(pPos.above(1)).getValue(PART).getSerializedName().matches("top");
-        } else if(part.matches("top")) {
-            return !pLevel.getBlockState(pPos.below(1)).getValue(PART).getSerializedName().matches("middle");
-        } else if(part.matches("bottom")) {
-            return !pLevel.getBlockState(pPos.above(1)).getValue(PART).getSerializedName().matches("middle");
+        CrystalParts part = pState.getValue(PART);
+
+        if(part == CrystalParts.MIDDLE) {
+            return pLevel.getBlockState(pPos.below(1)).is(Blocks.AIR) && pLevel.getBlockState(pPos.above(1)).is(Blocks.AIR);
+        } else if(part == CrystalParts.TOP) {
+            return pLevel.getBlockState(pPos.below(1)).is(Blocks.AIR) && pLevel.getBlockState(pPos.below(2)).is(Blocks.AIR);
+        } else if(part == CrystalParts.BOTTOM) {
+            return pLevel.getBlockState(pPos.above(1)).is(Blocks.AIR) && pLevel.getBlockState(pPos.above(2)).is(Blocks.AIR);
 
         }
         return super.canSurvive(pState, pLevel, pPos);
+    }
+
+    @Override
+    public void setPlacedBy(Level pLevel, BlockPos pPos, BlockState pState, @Nullable LivingEntity pPlacer, ItemStack pStack) {
+        switch (pState.getValue(PART)) {
+            case BOTTOM -> {
+                pLevel.setBlock(pPos.above(), ModBlocks.CELESTIAL_CRYSTAL.get().defaultBlockState().setValue(PART, CrystalParts.MIDDLE), 3);
+                pLevel.setBlock(pPos.above(2), ModBlocks.CELESTIAL_CRYSTAL.get().defaultBlockState().setValue(PART, CrystalParts.TOP), 3);
+            }
+            case MIDDLE -> {
+                pLevel.setBlock(pPos.below(), ModBlocks.CELESTIAL_CRYSTAL.get().defaultBlockState().setValue(PART, CrystalParts.BOTTOM), 3);
+                pLevel.setBlock(pPos.above(), ModBlocks.CELESTIAL_CRYSTAL.get().defaultBlockState().setValue(PART, CrystalParts.TOP), 3);
+            }
+            case TOP -> {
+                pLevel.setBlock(pPos.below(), ModBlocks.CELESTIAL_CRYSTAL.get().defaultBlockState().setValue(PART, CrystalParts.MIDDLE), 3);
+                pLevel.setBlock(pPos.below(2), ModBlocks.CELESTIAL_CRYSTAL.get().defaultBlockState().setValue(PART, CrystalParts.BOTTOM), 3);
+            }
+        }
+        super.setPlacedBy(pLevel, pPos, pState, pPlacer, pStack);
     }
 
     @Nullable
@@ -112,7 +150,7 @@ public class CelestialCrystalBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-        if(pState.getValue(PART).getSerializedName().matches("middle")) {
+        if(pState.getValue(PART) == CrystalParts.MIDDLE) {
             return pLevel.isClientSide ? null : createTickerHelper(pBlockEntityType, ModBlockEntities.CELESTIAL_CRYSTAL_BLOCK_ENTITY.get(), CelestialCrystalBlockEntity::tick);
         }
         return null;
