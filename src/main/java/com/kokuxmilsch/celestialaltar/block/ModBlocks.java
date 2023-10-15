@@ -21,9 +21,9 @@ public class ModBlocks {
 
     public static final RegistryObject<Block> ALTAR = registerBlock("altar", () -> new CelestialAltarBlock(BlockBehaviour.Properties.copy(Blocks.SCULK_SHRIEKER)));
 
-    public static final RegistryObject<Block> CELESTIAL_CRYSTAL = registerBlock("celestial_crystal", () -> new CelestialCrystalBlock(BlockBehaviour.Properties.copy(Blocks.AMETHYST_BLOCK)));
+    public static final RegistryObject<Block> CELESTIAL_CRYSTAL = registerBlock("celestial_crystal", () -> new CelestialCrystalBlock(BlockBehaviour.Properties.copy(Blocks.AMETHYST_BLOCK).requiresCorrectToolForDrops()));
 
-    public static final RegistryObject<Block> GLOW_STONE_EVAPORATOR = registerBlock("glowstone_evaporator", () -> new GlowStoneEvaporatorBlock(BlockBehaviour.Properties.copy(Blocks.RESPAWN_ANCHOR)));
+    public static final RegistryObject<Block> GLOW_STONE_EVAPORATOR = registerBlock("glowstone_evaporator", () -> new GlowStoneEvaporatorBlock(BlockBehaviour.Properties.copy(Blocks.RESPAWN_ANCHOR).requiresCorrectToolForDrops()));
 
     private static <T extends Block>RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);
