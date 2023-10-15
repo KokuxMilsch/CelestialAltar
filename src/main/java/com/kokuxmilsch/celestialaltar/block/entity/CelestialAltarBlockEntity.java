@@ -4,10 +4,12 @@ import com.kokuxmilsch.celestialaltar.CelestialAltar;
 import com.kokuxmilsch.celestialaltar.block.CelestialAltarBlock;
 import com.kokuxmilsch.celestialaltar.block.CelestialCrystalBlock;
 import com.kokuxmilsch.celestialaltar.block.GlowStoneEvaporatorBlock;
+import com.kokuxmilsch.celestialaltar.block.ModBlocks;
 import com.kokuxmilsch.celestialaltar.misc.RitualType;
 import com.kokuxmilsch.celestialaltar.multiblock.Multiblock;
 import com.kokuxmilsch.celestialaltar.recipe.CelestialAltarRecipe;
 import com.kokuxmilsch.celestialaltar.client.screen.CelestialAltarMenu;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -51,6 +53,7 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
     public boolean active = false;
     public int active_int = 0;
     private boolean structure_complete = false;
+    private int tickCount = 0;
 
     private int clientProgress;
     private int progress = 0;
@@ -182,7 +185,13 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
         pBlockEntity.validateMultiblock(level, blockPos);
 
         if(pBlockEntity.validMultiblock()) {
-            if(pBlockEntity.checkForClearSky(blockPos)) {
+            pBlockEntity.tickCount++;
+            if(pBlockEntity.tickCount >= 40) { //only check every 2 seconds for skylight
+                pBlockEntity.checkForClearSky(blockPos);
+                pBlockEntity.tickCount = 0;
+            }
+
+            if(pBlockEntity.hasSkyAccess == 1) {
                 //Process Events
                 if (pBlockEntity.hasRecipe() && pBlockEntity.progress <= maxProgress) {
                     resumeProgress((ServerLevel) level, blockPos, pBlockEntity);
@@ -421,9 +430,10 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
     }
 
     public boolean checkForClearSky(BlockPos pPos) {
-        BlockPos pos = pPos.above(1); //start above the celestial crystal
-        for (int i = 0; i < (this.level.getHeight(Heightmap.Types.WORLD_SURFACE, pos.getX(), pos.getZ())-pos.getY())-1; i++) {
-            if(!this.level.getBlockState(pos.above(i)).is(Blocks.AIR)) {
+        BlockPos pos = pPos;
+        for (int i = 0; i < (this.level.getHeight(Heightmap.Types.WORLD_SURFACE, pos.getX(), pos.getZ())-pPos.getY()); i++) {
+            pos = pos.above();
+            if(!this.level.getBlockState(pos).is(Blocks.AIR) && !this.level.getBlockState(pos).is(ModBlocks.CELESTIAL_CRYSTAL.get())) {
                 this.hasSkyAccess = 0;
                 return false;
             }
