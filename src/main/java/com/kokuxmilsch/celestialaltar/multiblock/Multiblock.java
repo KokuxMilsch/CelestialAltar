@@ -74,7 +74,9 @@ public class Multiblock {
             new BlockEntry(-2,3, 2, Blocks.END_ROD),
             new BlockEntry(-2,3, -2, Blocks.END_ROD),
 
-            new BlockEntry(0,4, 0, ModBlocks.CELESTIAL_CRYSTAL.get())
+            new BlockEntry(0,3, 0, ModBlocks.CELESTIAL_CRYSTAL.get()),
+            new BlockEntry(0,4, 0, ModBlocks.CELESTIAL_CRYSTAL.get()),
+            new BlockEntry(0,5, 0, ModBlocks.CELESTIAL_CRYSTAL.get())
     );
 
 
