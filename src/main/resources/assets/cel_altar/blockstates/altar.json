@@ -1,9 +1,15 @@
 {
   "variants": {
-    "activated=true": {
+    "active=true,crafting=true": {
       "model": "cel_altar:block/altar"
     },
-    "activated=false": {
+    "active=false,crafting=false": {
+      "model": "cel_altar:block/altar"
+    },
+    "active=true,crafting=false": {
+      "model": "cel_altar:block/altar"
+    },
+    "active=false,crafting=true": {
       "model": "cel_altar:block/altar"
     }
   }
