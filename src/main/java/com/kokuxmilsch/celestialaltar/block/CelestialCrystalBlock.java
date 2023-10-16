@@ -183,7 +183,7 @@ public class CelestialCrystalBlock extends BaseEntityBlock {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
         if(pState.getValue(PART) == CrystalParts.MIDDLE) {
-            return pLevel.isClientSide ? null : createTickerHelper(pBlockEntityType, ModBlockEntities.CELESTIAL_CRYSTAL_BLOCK_ENTITY.get(), CelestialCrystalBlockEntity::tick);
+            return pLevel.isClientSide ? createTickerHelper(pBlockEntityType, ModBlockEntities.CELESTIAL_CRYSTAL_BLOCK_ENTITY.get(), CelestialCrystalBlockEntity::clientTick) : null;
         }
         return null;
     }

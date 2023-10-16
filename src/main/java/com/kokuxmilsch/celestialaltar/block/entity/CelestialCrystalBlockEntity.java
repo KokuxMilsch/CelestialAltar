@@ -1,12 +1,13 @@
 package com.kokuxmilsch.celestialaltar.block.entity;
 
 import com.kokuxmilsch.celestialaltar.block.CelestialCrystalBlock;
+import com.kokuxmilsch.celestialaltar.client.helper.ClientHelper;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class CelestialCrystalBlockEntity extends BlockEntity {
@@ -17,7 +18,8 @@ public class CelestialCrystalBlockEntity extends BlockEntity {
         super(ModBlockEntities.CELESTIAL_CRYSTAL_BLOCK_ENTITY.get(), pPos, pBlockState);
     }
 
-    public static void tick(Level level, BlockPos pos, BlockState blockState, CelestialCrystalBlockEntity celestialCrystalBlockEntity) {
+
+    public static void clientTick(Level level, BlockPos pos, BlockState blockState, CelestialCrystalBlockEntity celestialCrystalBlockEntity) {
         if(blockState.getValue(CelestialCrystalBlock.ACTIVATED) && !blockState.getValue(CelestialCrystalBlock.SPLIT)) {
             direction = direction + 1.5D;
             if (direction > 360.0D) {
@@ -28,8 +30,8 @@ public class CelestialCrystalBlockEntity extends BlockEntity {
             double x = pos.getX() + 0.5 + Math.sin(direction / 10) * radius;
             double z = pos.getZ() + 0.5 + Math.cos(direction / 10) * radius;
 
-            for (int i = 0; i < 10; i++) {
-                ((ServerLevel) level).sendParticles(ParticleTypes.PORTAL, x, pos.getY() + 0.2, z, 1, 0.1, 0, 0.1, 0);
+            if(level instanceof ClientLevel) {
+                ClientHelper.addParticleServerFormat((ClientLevel) level, ParticleTypes.PORTAL, x, pos.getY(), z, 0.1, 0, 0.1, 10, 0);
             }
         }
     }
