@@ -20,7 +20,7 @@ public class ModItems {
 
     public static final RegistryObject<Item> NIGHT_SKY_CRYSTAL_SHARD = ITEMS.register("night_sky_crystal_shard", () -> new GlowingItem(new Item.Properties().rarity(Rarity.EPIC)));
 
-    public static final RegistryObject<Item> ENCHANTED_EYE_OF_ENDER = ITEMS.register("enchanted_eye_of_ender", () -> new EnchantedEyeOfEnder(new Item.Properties().rarity(Rarity.EPIC)));
+    //public static final RegistryObject<Item> ENCHANTED_EYE_OF_ENDER = ITEMS.register("enchanted_eye_of_ender", () -> new EnchantedEyeOfEnder(new Item.Properties().rarity(Rarity.EPIC)));
 
     public static final RegistryObject<Item> SUNNY_RITUAL = ITEMS.register("sunny_ritual", () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(1)));
 

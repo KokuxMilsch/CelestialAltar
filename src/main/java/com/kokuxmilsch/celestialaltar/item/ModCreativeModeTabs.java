@@ -25,7 +25,6 @@ public class ModCreativeModeTabs {
                 pOutput.accept(ModItems.LIGHTNING_STEEL.get());
                 pOutput.accept(ModItems.SKY_CRYSTAL_SHARD.get());
                 pOutput.accept(ModItems.NIGHT_SKY_CRYSTAL_SHARD.get());
-                pOutput.accept(ModItems.ENCHANTED_EYE_OF_ENDER.get());
                 pOutput.accept(ModBlocks.ALTAR.get());
                 pOutput.accept(ModBlocks.CELESTIAL_CRYSTAL.get());
                 pOutput.accept(ModBlocks.GLOW_STONE_EVAPORATOR.get());
