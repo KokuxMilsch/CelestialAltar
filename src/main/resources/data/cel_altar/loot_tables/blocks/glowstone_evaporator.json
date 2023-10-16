@@ -11,6 +11,15 @@
       "entries": [
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "cel_altar:glowstone_evaporator",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "part": "lower"
+              }
+            }
+          ],
           "name": "cel_altar:glowstone_evaporator"
         }
       ],

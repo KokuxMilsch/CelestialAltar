@@ -14,18 +14,20 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.RespawnAnchorBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
-public class GlowStoneEvaporatorBlock extends RespawnAnchorBlock {
+public class GlowStoneEvaporatorBlock extends Block{
 
     public static final BooleanProperty STANDALONE = BooleanProperty.create("standalone");
     public static final EnumProperty<GSE_Part> PART = EnumProperty.create("part", GSE_Part.class);
+    public static final IntegerProperty CHARGE = BlockStateProperties.RESPAWN_ANCHOR_CHARGES;
 
     public GlowStoneEvaporatorBlock(Properties pProperties) {
         super(pProperties);
@@ -39,7 +41,27 @@ public class GlowStoneEvaporatorBlock extends RespawnAnchorBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
-        pBuilder.add(PART);
+        pBuilder.add(PART, CHARGE, STANDALONE);
+    }
+
+    public void playerWillDestroy(Level pLevel, BlockPos pPos, BlockState pState, Player pPlayer) {
+        if (!pLevel.isClientSide && pPlayer.isCreative()) {
+            preventCreativeDropFromMiddlePart(pLevel, pPos, pState, pPlayer);
+        }
+
+        super.playerWillDestroy(pLevel, pPos, pState, pPlayer);
+    }
+
+    protected static void preventCreativeDropFromMiddlePart(Level pLevel, BlockPos pPos, BlockState pState, Player pPlayer) {
+        GSE_Part part = pState.getValue(PART);
+        if (part == GSE_Part.UPPER) {
+            BlockPos blockpos = pPos.below();
+            BlockState blockStateBelow = pLevel.getBlockState(blockpos);
+            if (blockStateBelow.is(pState.getBlock()) && blockStateBelow.getValue(PART) == GSE_Part.LOWER) {
+                pLevel.setBlock(blockpos, Blocks.AIR.defaultBlockState(), 35);
+                pLevel.levelEvent(pPlayer, 2001, blockpos, Block.getId(Blocks.AIR.defaultBlockState()));
+            }
+        }
     }
 
     @Override
@@ -70,11 +92,12 @@ public class GlowStoneEvaporatorBlock extends RespawnAnchorBlock {
     @Override
     public void setPlacedBy(Level pLevel, BlockPos pPos, BlockState pState, @Nullable LivingEntity pPlacer, ItemStack pStack) {
         switch (pState.getValue(PART)) {
-            case LOWER -> pLevel.setBlock(pPos.above(), ModBlocks.CELESTIAL_CRYSTAL.get().defaultBlockState().setValue(PART, GSE_Part.UPPER), 3);
-            case UPPER -> pLevel.setBlock(pPos.below(), ModBlocks.CELESTIAL_CRYSTAL.get().defaultBlockState().setValue(PART, GSE_Part.LOWER), 3);
+            case LOWER -> pLevel.setBlock(pPos.above(), this.defaultBlockState().setValue(PART, GSE_Part.UPPER), 3);
+            case UPPER -> pLevel.setBlock(pPos.below(), this.defaultBlockState().setValue(PART, GSE_Part.LOWER), 3);
         }
         super.setPlacedBy(pLevel, pPos, pState, pPlacer, pStack);
     }
+
 
     @Nullable
     @Override
@@ -82,15 +105,16 @@ public class GlowStoneEvaporatorBlock extends RespawnAnchorBlock {
         Direction clickedFace = pContext.getClickedFace();
         if(clickedFace.getAxis().isVertical()) {
             if(clickedFace == Direction.UP) {
-                return this.defaultBlockState().setValue(PART, GSE_Part.UPPER);
-            } else {
                 return this.defaultBlockState().setValue(PART, GSE_Part.LOWER);
+            } else {
+                return this.defaultBlockState().setValue(PART, GSE_Part.UPPER);
             }
         }
         return super.getStateForPlacement(pContext);
     }
 
-    public enum GSE_Part implements StringRepresentable{
+
+    private enum GSE_Part implements StringRepresentable{
         UPPER,
         LOWER;
 
