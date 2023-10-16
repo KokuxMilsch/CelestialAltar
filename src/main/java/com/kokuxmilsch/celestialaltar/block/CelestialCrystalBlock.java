@@ -92,12 +92,20 @@ public class CelestialCrystalBlock extends BaseEntityBlock {
     @Override
     public BlockState updateShape(BlockState pState, Direction pDirection, BlockState pNeighborState, LevelAccessor pLevel, BlockPos pCurrentPos, BlockPos pNeighborPos) {
         if(pDirection.getAxis() == Direction.Axis.Y) {
-            return switch(pState.getValue(PART)) {
-                case BOTTOM -> (pDirection == Direction.UP) ?  ((pNeighborState.is(this) && pNeighborState.getValue(PART) == CrystalParts.MIDDLE) ? pState : Blocks.AIR.defaultBlockState()) : pState;
+            if(pNeighborState.is(this)) {
+                if (pNeighborState.getValue(SPLIT) && !pState.getValue(SPLIT)) {
+                    return pState.setValue(SPLIT, true);
+                }
+                else if (!pNeighborState.getValue(SPLIT) && pState.getValue(SPLIT)) {
+                    return pState.setValue(SPLIT, false);
+                }
+            }
+            return switch (pState.getValue(PART)) {
+                case BOTTOM -> (pDirection == Direction.UP) ? ((pNeighborState.is(this) && pNeighborState.getValue(PART) == CrystalParts.MIDDLE) ? pState : Blocks.AIR.defaultBlockState()) : pState;
 
                 case MIDDLE -> (pNeighborState.is(this) && ((pNeighborState.getValue(PART) == CrystalParts.BOTTOM) || (pNeighborState.getValue(PART) == CrystalParts.TOP))) ? pState : Blocks.AIR.defaultBlockState();
 
-                case TOP -> (pDirection == Direction.DOWN) ?  ((pNeighborState.is(this) && pNeighborState.getValue(PART) == CrystalParts.MIDDLE) ? pState : Blocks.AIR.defaultBlockState()) : pState;
+                case TOP -> (pDirection == Direction.DOWN) ? ((pNeighborState.is(this) && pNeighborState.getValue(PART) == CrystalParts.MIDDLE) ? pState : Blocks.AIR.defaultBlockState()) : pState;
             };
         }
         return super.updateShape(pState, pDirection, pNeighborState, pLevel, pCurrentPos, pNeighborPos);
