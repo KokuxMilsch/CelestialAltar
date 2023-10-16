@@ -46,29 +46,11 @@ public class RitualAnimation {
             CelestialAltarBlockEntity.playSound(pLevel, SoundEvents.RESPAWN_ANCHOR_CHARGE, pPos, 1f, 1f);
         }
         if (progress > 60 && progress < 110) {
-            //beam animation
-            //double increment = (double) Math.round((((double) (progress - 60)) * 0.03333D) * 100) / 100;
-            //BlockPos particlePos = pPos.offset(2, 4, 2);
-            //pLevel.sendParticles(ParticleTypes.END_ROD, particlePos.getX() + 0.5 - increment, particlePos.getY() + (increment / 2), particlePos.getZ() + 0.5 - increment, 1, 0, 0, 0, 0);
-
-            //particlePos = pPos.offset(2, 4, -2);
-            //pLevel.sendParticles(ParticleTypes.END_ROD, particlePos.getX() + 0.5 - increment, particlePos.getY() + (increment / 2), particlePos.getZ() + 0.5 + increment, 1, 0, 0, 0, 0);
-
-            //particlePos = pPos.offset(-2, 4, 2);
-            //pLevel.sendParticles(ParticleTypes.END_ROD, particlePos.getX() + 0.5 + increment, particlePos.getY() + (increment / 2), particlePos.getZ() + 0.5 - increment, 1, 0, 0, 0, 0);
-
-            //particlePos = pPos.offset(-2, 4, -2);
-            //pLevel.sendParticles(ParticleTypes.END_ROD, particlePos.getX() + 0.5 + increment, particlePos.getY() + (increment / 2), particlePos.getZ() + 0.5 + increment, 1, 0, 0, 0, 0);
-
             CelestialAltarBlockEntity.playSound(pLevel, SoundEvents.BEACON_POWER_SELECT, pPos, 2f, 1f);
         }
         if (progress == 115) {
             CelestialAltarBlockEntity.playSound(pLevel, SoundEvents.BEACON_ACTIVATE, pPos, 1.2f, 3f);
-            //pLevel.sendParticles(ParticleTypes.EXPLOSION, pPos.getX() + 0.5, pPos.getY() + 4.5, pPos.getZ() + 0.5, 4, 0, 0, 0, 1);
 
-        }
-        if (progress >= 110 && progress <= 120) {
-            //pLevel.sendParticles(ParticleTypes.FLASH, pPos.getX() + 0.5, pPos.getY() + 4.5, pPos.getZ() + 0.5, 1, 0, 0, 0, 0);
         }
         if (progress == 120) {
             pLevel.setBlock(pPos.above(4), pLevel.getBlockState(pPos.above(4)).trySetValue(CelestialCrystalBlock.SPLIT, true), 2);
@@ -78,15 +60,9 @@ public class RitualAnimation {
                 CelestialAltarBlockEntity.playSound(pLevel, SoundEvents.PORTAL_AMBIENT, pPos, 0.5f, 2f);
             }
         }
-        if (progress >= 120 && progress < 300) {
-            //pLevel.sendParticles(ParticleTypes.ENCHANTED_HIT, pPos.getX() + 0.5, pPos.getY() + 1.5, pPos.getZ() + 0.5, 10, 0.4, 0.3, 0.4, 0);
-        }
         if (progress == 300) {
             CelestialAltarBlockEntity.playSound(pLevel, SoundEvents.ENDER_DRAGON_GROWL, pPos, 0.5f, 1f);
             CelestialAltarBlockEntity.playSound(pLevel, SoundEvents.BEACON_DEACTIVATE, pPos, 0.5f, 1f);
-        }
-        if (progress >= 300 && progress < 350 && progress % 2 == 0) {
-            //pLevel.sendParticles(ParticleTypes.SONIC_BOOM, pPos.getX() + 0.5, pPos.getY() + 0.5 + (double) ((progress - 300) / 2), pPos.getZ() + 0.5, 2, 0, 0, 0, 1);
         }
         if (progress == 280) {
             for (int i = 0; i < 4; i++) {
@@ -98,7 +74,6 @@ public class RitualAnimation {
             CelestialAltarBlockEntity.playSound(pLevel, SoundEvents.BEACON_DEACTIVATE, pPos, 0.9f, 2f);
             CelestialAltarBlockEntity.playSound(pLevel, SoundEvents.LIGHTNING_BOLT_THUNDER, pPos, 0.5f, 3f);
             CelestialAltarBlockEntity.playSound(pLevel, SoundEvents.END_PORTAL_SPAWN, pPos, 0.5f, 3f);
-            //pLevel.sendParticles(ParticleTypes.EXPLOSION_EMITTER, pPos.getX() + 0.5, pPos.getY() + 4.5, pPos.getZ() + 0.5, 1, 0, 0, 0, 1);
 
             pLevel.setBlock(pPos.offset(2, 2, 2), pLevel.getBlockState(pPos.offset(2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 0), 2);
             pLevel.setBlock(pPos.offset(2, 2, -2), pLevel.getBlockState(pPos.offset(2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 0), 2);
