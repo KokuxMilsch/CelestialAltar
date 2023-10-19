@@ -315,7 +315,12 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
         active = true;
         this.level.playSound(null, this.worldPosition, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.MASTER, 1f, 1.4f);
         this.level.setBlock(this.worldPosition, pState.setValue(CelestialAltarBlock.ACTIVE, true), 3);
-        this.level.setBlock(this.worldPosition.above(4), this.level.getBlockState(this.worldPosition.above(4)).trySetValue(CelestialCrystalBlock.ACTIVATED, true), 2);
+        this.level.setBlock(this.worldPosition.above(4), this.level.getBlockState(this.worldPosition.above(4)).trySetValue(CelestialCrystalBlock.ACTIVATED, true), 3);
+
+        this.level.setBlock(this.worldPosition.offset(2, 2, 2), this.level.getBlockState(this.worldPosition.offset(2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.STANDALONE, false), 3);
+        this.level.setBlock(this.worldPosition.offset(-2, 2, 2), this.level.getBlockState(this.worldPosition.offset(2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.STANDALONE, false), 3);
+        this.level.setBlock(this.worldPosition.offset(2, 2, -2), this.level.getBlockState(this.worldPosition.offset(2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.STANDALONE, false), 3);
+        this.level.setBlock(this.worldPosition.offset(-2, 2, -2), this.level.getBlockState(this.worldPosition.offset(2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.STANDALONE, false), 3);
     }
 
     public void validateMultiblock(Level pLevel, BlockPos pBlockPos) {
@@ -360,10 +365,10 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
             serverLevel.sendParticles(ParticleTypes.EXPLOSION_EMITTER, this.worldPosition.getX() + 0.5, this.worldPosition.getY() + 2.5, this.worldPosition.getZ() + 0.5, 1, 0, 0, 0, 0);
 
         }
-        this.level.setBlock(this.worldPosition.offset(2, 2, 2), this.level.getBlockState(this.worldPosition.offset(2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 0), 2);
-        this.level.setBlock(this.worldPosition.offset(2, 2, -2), this.level.getBlockState(this.worldPosition.offset(2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 0), 2);
-        this.level.setBlock(this.worldPosition.offset(-2, 2, 2), this.level.getBlockState(this.worldPosition.offset(-2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 0), 2);
-        this.level.setBlock(this.worldPosition.offset(-2, 2, -2), this.level.getBlockState(this.worldPosition.offset(-2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 0), 2);
+        this.level.setBlock(this.worldPosition.offset(2, 2, 2), this.level.getBlockState(this.worldPosition.offset(2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 0).trySetValue(GlowStoneEvaporatorBlock.STANDALONE, true), 3);
+        this.level.setBlock(this.worldPosition.offset(2, 2, -2), this.level.getBlockState(this.worldPosition.offset(2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 0).trySetValue(GlowStoneEvaporatorBlock.STANDALONE, true), 3);
+        this.level.setBlock(this.worldPosition.offset(-2, 2, 2), this.level.getBlockState(this.worldPosition.offset(-2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 0).trySetValue(GlowStoneEvaporatorBlock.STANDALONE, true), 3);
+        this.level.setBlock(this.worldPosition.offset(-2, 2, -2), this.level.getBlockState(this.worldPosition.offset(-2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 0).trySetValue(GlowStoneEvaporatorBlock.STANDALONE, true), 3);
 
         this.level.setBlock(this.worldPosition.above(4), this.level.getBlockState(this.worldPosition.above(4)).trySetValue(CelestialCrystalBlock.ACTIVATED, false).trySetValue(CelestialCrystalBlock.SPLIT, false), 2);
         this.level.setBlock(this.worldPosition, pBlockState.setValue(CelestialAltarBlock.ACTIVE, false).setValue(CelestialAltarBlock.CRAFTING, false), 3);
