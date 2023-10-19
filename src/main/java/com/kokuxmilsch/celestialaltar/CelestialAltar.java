@@ -3,8 +3,10 @@ package com.kokuxmilsch.celestialaltar;
 import com.kokuxmilsch.celestialaltar.block.ModBlocks;
 import com.kokuxmilsch.celestialaltar.block.entity.ModBlockEntities;
 import com.kokuxmilsch.celestialaltar.client.blockentityrenderer.CelestialAltarBlockEntityRenderer;
+import com.kokuxmilsch.celestialaltar.client.screen.GlowStoneEvaporatorScreen;
 import com.kokuxmilsch.celestialaltar.item.ModCreativeModeTabs;
 import com.kokuxmilsch.celestialaltar.item.ModItems;
+import com.kokuxmilsch.celestialaltar.menu.GlowStoneEvaporatorMenu;
 import com.kokuxmilsch.celestialaltar.recipe.ModRecipes;
 import com.kokuxmilsch.celestialaltar.client.screen.CelestialAltarScreen;
 import com.kokuxmilsch.celestialaltar.menu.ModMenuTypes;
@@ -91,6 +93,7 @@ public class CelestialAltar
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.CELESTIAL_CRYSTAL.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.GLOW_STONE_EVAPORATOR.get(), RenderType.cutout());
             MenuScreens.register(ModMenuTypes.CELESTIAL_ALTAR_MENU.get(), CelestialAltarScreen::new);
+            MenuScreens.register(ModMenuTypes.GLOWSTONE_EVAPORATOR_MENU.get(), GlowStoneEvaporatorScreen::new);
         }
 
         @SubscribeEvent
