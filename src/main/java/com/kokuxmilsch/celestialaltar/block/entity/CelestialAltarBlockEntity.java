@@ -231,7 +231,7 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
         if (pBlockEntity.progress == 320) {
             changeWeatherOrTime(pLevel, pPos, pBlockEntity);
         }
-        RitualAnimation.animateServer(pLevel, pPos, pBlockEntity.progress);
+        RitualAnimation.animateServer(pLevel, pPos, pBlockEntity.progress, pBlockEntity);
     }
 
     public static void submitItems(ServerLevel pLevel, BlockPos pPos, CelestialAltarBlockEntity pBlockEntity) {
@@ -316,10 +316,8 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
         this.level.setBlock(this.worldPosition, pState.setValue(CelestialAltarBlock.ACTIVE, true), 3);
         this.level.setBlock(this.worldPosition.above(4), this.level.getBlockState(this.worldPosition.above(4)).trySetValue(CelestialCrystalBlock.ACTIVATED, true), 3);
 
-        this.level.setBlock(this.worldPosition.offset(2, 2, 2), this.level.getBlockState(this.worldPosition.offset(2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.STANDALONE, false), 3);
-        this.level.setBlock(this.worldPosition.offset(-2, 2, 2), this.level.getBlockState(this.worldPosition.offset(2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.STANDALONE, false), 3);
-        this.level.setBlock(this.worldPosition.offset(2, 2, -2), this.level.getBlockState(this.worldPosition.offset(2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.STANDALONE, false), 3);
-        this.level.setBlock(this.worldPosition.offset(-2, 2, -2), this.level.getBlockState(this.worldPosition.offset(2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.STANDALONE, false), 3);
+        updateGlowStoneEvaporators(0, true, false);
+
     }
 
     public void validateMultiblock(Level pLevel, BlockPos pBlockPos) {
@@ -364,14 +362,35 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
             serverLevel.sendParticles(ParticleTypes.EXPLOSION_EMITTER, this.worldPosition.getX() + 0.5, this.worldPosition.getY() + 2.5, this.worldPosition.getZ() + 0.5, 1, 0, 0, 0, 0);
 
         }
-        this.level.setBlock(this.worldPosition.offset(2, 2, 2), this.level.getBlockState(this.worldPosition.offset(2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 0).trySetValue(GlowStoneEvaporatorBlock.STANDALONE, true), 3);
-        this.level.setBlock(this.worldPosition.offset(2, 2, -2), this.level.getBlockState(this.worldPosition.offset(2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 0).trySetValue(GlowStoneEvaporatorBlock.STANDALONE, true), 3);
-        this.level.setBlock(this.worldPosition.offset(-2, 2, 2), this.level.getBlockState(this.worldPosition.offset(-2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 0).trySetValue(GlowStoneEvaporatorBlock.STANDALONE, true), 3);
-        this.level.setBlock(this.worldPosition.offset(-2, 2, -2), this.level.getBlockState(this.worldPosition.offset(-2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 0).trySetValue(GlowStoneEvaporatorBlock.STANDALONE, true), 3);
+        updateGlowStoneEvaporators(0, false, true);
 
         this.level.setBlock(this.worldPosition.above(4), this.level.getBlockState(this.worldPosition.above(4)).trySetValue(CelestialCrystalBlock.ACTIVATED, false).trySetValue(CelestialCrystalBlock.SPLIT, false), 2);
         this.level.setBlock(this.worldPosition, pBlockState.setValue(CelestialAltarBlock.ACTIVE, false).setValue(CelestialAltarBlock.CRAFTING, false), 3);
 
+    }
+
+    //TODO make it workad
+    public void updateGlowStoneEvaporators(int charge, boolean activation, boolean deactivation) {
+        BlockState gseState = ModBlocks.GLOW_STONE_EVAPORATOR.get().defaultBlockState(); // charges=0; standalone=true, part=bottom
+        if(activation) {
+            gseState.setValue(GlowStoneEvaporatorBlock.STANDALONE, false);
+        } else if(!deactivation) {
+            gseState.setValue(GlowStoneEvaporatorBlock.STANDALONE, false);
+            gseState.setValue(GlowStoneEvaporatorBlock.CHARGE, charge);
+        }
+        for (int i = -2; i <= 2; i+=4) {
+            for (int j = -2; j <= 2; j+=4) {
+                if(this.level.getBlockState(this.worldPosition.offset(i, 2, j)).is(ModBlocks.GLOW_STONE_EVAPORATOR.get())) {
+                    GlowStoneEvaporatorBlockEntity evaporatorBlockEntity = (GlowStoneEvaporatorBlockEntity) this.level.getBlockEntity(this.worldPosition.offset(i, 2, j));
+                    this.level.setBlock(this.worldPosition.offset(i, 2, j), gseState, 3);
+                    if(activation) {
+                        evaporatorBlockEntity.setAltar(this);
+                    } else if(deactivation){
+                        evaporatorBlockEntity.setAltar(null);
+                    }
+                }
+            }
+        }
     }
 
     public static void clientTick(Level level, BlockPos blockPos, BlockState blockState, CelestialAltarBlockEntity pBlockEntity) {
