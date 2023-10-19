@@ -12,37 +12,25 @@ import net.minecraft.sounds.SoundEvents;
 import org.apache.logging.log4j.core.jmx.Server;
 
 public class RitualAnimation {
-    public static void animateServer(ServerLevel pLevel, BlockPos pPos, int progress) {
+    public static void animateServer(ServerLevel pLevel, BlockPos pPos, int progress, CelestialAltarBlockEntity pBlockEntity) {
         //max Progress = 400t
         if (progress == 1) {
             CelestialAltarBlockEntity.playSound(pLevel, SoundEvents.BEACON_POWER_SELECT, pPos, 0.8f, 2.5f);
         }
         if (progress == 30) {
-            pLevel.setBlock(pPos.offset(2, 2, 2), pLevel.getBlockState(pPos.offset(2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 1), 2);
-            pLevel.setBlock(pPos.offset(2, 2, -2), pLevel.getBlockState(pPos.offset(2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 1), 2);
-            pLevel.setBlock(pPos.offset(-2, 2, 2), pLevel.getBlockState(pPos.offset(-2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 1), 2);
-            pLevel.setBlock(pPos.offset(-2, 2, -2), pLevel.getBlockState(pPos.offset(-2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 1), 2);
+            pBlockEntity.updateGlowStoneEvaporators(1, false, false);
             CelestialAltarBlockEntity.playSound(pLevel, SoundEvents.RESPAWN_ANCHOR_CHARGE, pPos, 1f, 1f);
         }
         if (progress == 40) {
-            pLevel.setBlock(pPos.offset(2, 2, 2), pLevel.getBlockState(pPos.offset(2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 2), 2);
-            pLevel.setBlock(pPos.offset(2, 2, -2), pLevel.getBlockState(pPos.offset(2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 2), 2);
-            pLevel.setBlock(pPos.offset(-2, 2, 2), pLevel.getBlockState(pPos.offset(-2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 2), 2);
-            pLevel.setBlock(pPos.offset(-2, 2, -2), pLevel.getBlockState(pPos.offset(-2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 2), 2);
+            pBlockEntity.updateGlowStoneEvaporators(2, false, false);
             CelestialAltarBlockEntity.playSound(pLevel, SoundEvents.RESPAWN_ANCHOR_CHARGE, pPos, 1f, 1f);
         }
         if (progress == 50) {
-            pLevel.setBlock(pPos.offset(2, 2, 2), pLevel.getBlockState(pPos.offset(2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 3), 2);
-            pLevel.setBlock(pPos.offset(2, 2, -2), pLevel.getBlockState(pPos.offset(2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 3), 2);
-            pLevel.setBlock(pPos.offset(-2, 2, 2), pLevel.getBlockState(pPos.offset(-2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 3), 2);
-            pLevel.setBlock(pPos.offset(-2, 2, -2), pLevel.getBlockState(pPos.offset(-2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 3), 2);
+            pBlockEntity.updateGlowStoneEvaporators(3, false, false);
             CelestialAltarBlockEntity.playSound(pLevel, SoundEvents.RESPAWN_ANCHOR_CHARGE, pPos, 1f, 1f);
         }
         if (progress == 60) {
-            pLevel.setBlock(pPos.offset(2, 2, 2), pLevel.getBlockState(pPos.offset(2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 4), 2);
-            pLevel.setBlock(pPos.offset(2, 2, -2), pLevel.getBlockState(pPos.offset(2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 4), 2);
-            pLevel.setBlock(pPos.offset(-2, 2, 2), pLevel.getBlockState(pPos.offset(-2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 4), 2);
-            pLevel.setBlock(pPos.offset(-2, 2, -2), pLevel.getBlockState(pPos.offset(-2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 4), 2);
+            pBlockEntity.updateGlowStoneEvaporators(4, false, false);
             CelestialAltarBlockEntity.playSound(pLevel, SoundEvents.RESPAWN_ANCHOR_CHARGE, pPos, 1f, 1f);
         }
         if (progress > 60 && progress < 110) {
@@ -75,10 +63,7 @@ public class RitualAnimation {
             CelestialAltarBlockEntity.playSound(pLevel, SoundEvents.LIGHTNING_BOLT_THUNDER, pPos, 0.5f, 3f);
             CelestialAltarBlockEntity.playSound(pLevel, SoundEvents.END_PORTAL_SPAWN, pPos, 0.5f, 3f);
 
-            pLevel.setBlock(pPos.offset(2, 2, 2), pLevel.getBlockState(pPos.offset(2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 0), 2);
-            pLevel.setBlock(pPos.offset(2, 2, -2), pLevel.getBlockState(pPos.offset(2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 0), 2);
-            pLevel.setBlock(pPos.offset(-2, 2, 2), pLevel.getBlockState(pPos.offset(-2, 2, 2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 0), 2);
-            pLevel.setBlock(pPos.offset(-2, 2, -2), pLevel.getBlockState(pPos.offset(-2, 2, -2)).trySetValue(GlowStoneEvaporatorBlock.CHARGE, 0), 2);
+            pBlockEntity.updateGlowStoneEvaporators(0, false, false);
 
             pLevel.setBlock(pPos.above(4), pLevel.getBlockState(pPos.above(4)).trySetValue(CelestialCrystalBlock.SPLIT, false), 2);
         }
