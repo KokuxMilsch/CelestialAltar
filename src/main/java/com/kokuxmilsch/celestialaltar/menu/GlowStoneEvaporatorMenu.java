@@ -37,10 +37,11 @@ public class GlowStoneEvaporatorMenu extends AbstractContainerMenu {
 
 
         this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(handler -> {
-            this.addSlot(new GlowStoneEvaporatorMenu.GlowStoneSlot(handler, 0, 8, 51));
-            this.addSlot(new SlotItemHandler(handler, 1, 152, 51));
-            this.addSlot(new SlotItemHandler(handler, 2, 80, 51));
-            this.addSlot(new SlotItemHandler(handler, 2, 10, 51));
+            this.addSlot(new SlotItemHandler(handler, 0, 8, 53));
+            this.addSlot(new GlowStoneEvaporatorMenu.GlowStoneSlot(handler, 1, 8, 17));
+            this.addSlot(new SlotItemHandler(handler, 2, 56, 17));
+            this.addSlot(new SlotItemHandler(handler, 3, 56, 53));
+            this.addSlot(new SlotItemHandler(handler, 4, 117, 36));
         });
 
 
@@ -98,36 +99,12 @@ public class GlowStoneEvaporatorMenu extends AbstractContainerMenu {
         return copyOfSourceStack;
     }
 
-    public boolean isCrafting() {
-        return false;
-    }
-
     public int getScaledProgress() {
         int progress = this.data.get(0);
-        int maxProgress = 100;  // Max Progress
+        int maxProgress = this.data.get(1);  // Max Progress
         int progressBarSize = 22; // This is the height in pixels of your arrow
 
         return progress != 0 ? progress * progressBarSize / maxProgress : 0;
-    }
-
-    public int getScaledPreRitualProgress() {
-        int progress = this.data.get(0);
-        int maxProgress = 100;
-        int progressBarSize = 49; // This is the width in pixels of your arrow
-
-        return progress != 0 ? progress * progressBarSize / maxProgress : 0;
-    }
-
-    public int getScaledGlowStoneCharge() {
-        int glowStoneCharge = this.data.get(3);
-        int maxGlowStoneCharge = this.data.get(4);  // Max Progress
-        int progressBarSize = 32; // This is the height in pixels of your arrow
-
-        return maxGlowStoneCharge != 0 && glowStoneCharge != 0 ? glowStoneCharge * progressBarSize / maxGlowStoneCharge : 0;
-    }
-
-    public RitualType getRitualType() {
-        return RitualType.values()[data.get(1)];
     }
 
     @Override
