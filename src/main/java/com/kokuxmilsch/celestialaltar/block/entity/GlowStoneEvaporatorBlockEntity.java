@@ -137,6 +137,10 @@ public class GlowStoneEvaporatorBlockEntity extends BlockEntity implements MenuP
         Containers.dropContents(this.level, this.worldPosition, temp);
     }
 
+    public void setAltar(@Nullable CelestialAltarBlockEntity altarBlockEntity) {
+        this.altar = altarBlockEntity;
+    }
+
     public static void tick(Level level, BlockPos blockPos, BlockState blockState, GlowStoneEvaporatorBlockEntity pBlockEntity) {
         if(pBlockEntity.hasRecipe()) {
             pBlockEntity.progress++;
