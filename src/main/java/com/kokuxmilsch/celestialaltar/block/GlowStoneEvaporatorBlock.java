@@ -189,7 +189,10 @@ public class GlowStoneEvaporatorBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-        return pLevel.isClientSide ? null : createTickerHelper(pBlockEntityType, ModBlockEntities.GLOWSTONE_EVAPORATOR_BLOCK_ENTITY.get(), GlowStoneEvaporatorBlockEntity::tick);
+        if(pState.getValue(STANDALONE)) {
+            return pLevel.isClientSide ? null : createTickerHelper(pBlockEntityType, ModBlockEntities.GLOWSTONE_EVAPORATOR_BLOCK_ENTITY.get(), GlowStoneEvaporatorBlockEntity::tick);
+        }
+        return null;
     }
 
     @Override
