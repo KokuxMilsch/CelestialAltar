@@ -1,4 +1,4 @@
-package com.kokuxmilsch.celestialaltar.client.screen;
+package com.kokuxmilsch.celestialaltar.menu;
 
 import com.kokuxmilsch.celestialaltar.CelestialAltar;
 import net.minecraft.world.inventory.AbstractContainerMenu;

@@ -1,4 +1,4 @@
-package com.kokuxmilsch.celestialaltar.client.screen;
+package com.kokuxmilsch.celestialaltar.menu;
 
 import com.kokuxmilsch.celestialaltar.block.ModBlocks;
 import com.kokuxmilsch.celestialaltar.block.entity.CelestialAltarBlockEntity;

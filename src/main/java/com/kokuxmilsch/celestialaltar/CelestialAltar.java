@@ -1,19 +1,17 @@
 package com.kokuxmilsch.celestialaltar;
 
 import com.kokuxmilsch.celestialaltar.block.ModBlocks;
-import com.kokuxmilsch.celestialaltar.block.entity.CelestialAltarBlockEntity;
 import com.kokuxmilsch.celestialaltar.block.entity.ModBlockEntities;
 import com.kokuxmilsch.celestialaltar.client.blockentityrenderer.CelestialAltarBlockEntityRenderer;
 import com.kokuxmilsch.celestialaltar.item.ModCreativeModeTabs;
 import com.kokuxmilsch.celestialaltar.item.ModItems;
 import com.kokuxmilsch.celestialaltar.recipe.ModRecipes;
 import com.kokuxmilsch.celestialaltar.client.screen.CelestialAltarScreen;
-import com.kokuxmilsch.celestialaltar.client.screen.ModMenuTypes;
+import com.kokuxmilsch.celestialaltar.menu.ModMenuTypes;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;

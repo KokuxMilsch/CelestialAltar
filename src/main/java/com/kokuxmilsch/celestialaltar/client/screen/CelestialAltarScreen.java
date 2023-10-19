@@ -2,6 +2,7 @@ package com.kokuxmilsch.celestialaltar.client.screen;
 
 import com.kokuxmilsch.celestialaltar.CelestialAltar;
 import com.kokuxmilsch.celestialaltar.item.ModItems;
+import com.kokuxmilsch.celestialaltar.menu.CelestialAltarMenu;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
