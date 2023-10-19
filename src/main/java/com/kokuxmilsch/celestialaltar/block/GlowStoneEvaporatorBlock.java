@@ -9,6 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
@@ -21,6 +22,9 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class GlowStoneEvaporatorBlock extends Block{
@@ -28,6 +32,17 @@ public class GlowStoneEvaporatorBlock extends Block{
     public static final BooleanProperty STANDALONE = BooleanProperty.create("standalone");
     public static final EnumProperty<GSE_Part> PART = EnumProperty.create("part", GSE_Part.class);
     public static final IntegerProperty CHARGE = BlockStateProperties.RESPAWN_ANCHOR_CHARGES;
+
+    protected static final VoxelShape TOP_SHAPE = Shapes.or(
+            Block.box(0.0D, -16.0D, 0.0D, 16.0D, 0.0D, 16.0D), //Bottom
+
+            Block.box(6.0D, 0.0D, 6.0D, 10.0D, 14.0D, 10.0D) //Top
+    );
+    protected static final VoxelShape BOTTOM_SHAPE = Shapes.or(
+            Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D), //Bottom
+
+            Block.box(6.0D, 16.0D, 6.0D, 10.0D, 30.0D, 10.0D) //Top
+    );
 
     public GlowStoneEvaporatorBlock(Properties pProperties) {
         super(pProperties);
@@ -112,6 +127,15 @@ public class GlowStoneEvaporatorBlock extends Block{
         }
         return super.getStateForPlacement(pContext);
     }
+
+    @Override
+    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+        return switch (pState.getValue(PART)) {
+            case UPPER -> TOP_SHAPE;
+            case LOWER -> BOTTOM_SHAPE;
+        };
+    }
+
 
 
     private enum GSE_Part implements StringRepresentable{
