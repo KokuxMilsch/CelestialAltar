@@ -19,6 +19,9 @@ public class ModBlockEntities {
     public static final RegistryObject<BlockEntityType<CelestialCrystalBlockEntity>> CELESTIAL_CRYSTAL_BLOCK_ENTITY = BLOCK_ENTITIES.register("celestial_crystal_block_entity",
             () -> BlockEntityType.Builder.of(CelestialCrystalBlockEntity::new, ModBlocks.CELESTIAL_CRYSTAL.get()).build(null));
 
+    public static final RegistryObject<BlockEntityType<GlowStoneEvaporatorBlockEntity>> GLOWSTONE_EVAPORATOR_BLOCK_ENTITY = BLOCK_ENTITIES.register("glostone_evaporator_block_entity",
+            () -> BlockEntityType.Builder.of(GlowStoneEvaporatorBlockEntity::new, ModBlocks.GLOW_STONE_EVAPORATOR.get()).build(null));
+
 
 
     public static void register(IEventBus modEventbus) {
