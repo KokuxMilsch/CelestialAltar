@@ -1,7 +1,11 @@
 package com.kokuxmilsch.celestialaltar.block;
 
+import com.kokuxmilsch.celestialaltar.block.entity.CelestialAltarBlockEntity;
+import com.kokuxmilsch.celestialaltar.block.entity.GlowStoneEvaporatorBlockEntity;
+import com.kokuxmilsch.celestialaltar.block.entity.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -13,8 +17,13 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -25,9 +34,10 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
-public class GlowStoneEvaporatorBlock extends Block{
+public class GlowStoneEvaporatorBlock extends BaseEntityBlock {
 
     public static final BooleanProperty STANDALONE = BooleanProperty.create("standalone");
     public static final EnumProperty<GSE_Part> PART = EnumProperty.create("part", GSE_Part.class);
@@ -51,7 +61,32 @@ public class GlowStoneEvaporatorBlock extends Block{
 
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-        return InteractionResult.PASS;
+        if(!pLevel.isClientSide) {
+            BlockPos newPos = pPos;
+            if(pState.getValue(PART) == GSE_Part.UPPER) {
+                if(pLevel.getBlockState(pPos.below()).is(this) && pLevel.getBlockState(pPos.below()).getValue(PART) == GSE_Part.LOWER) {
+                    newPos = pPos.below();
+                }
+            }
+            BlockEntity blockEntity = pLevel.getBlockEntity(newPos);
+            if(pState.getValue(STANDALONE)) {
+                if (blockEntity instanceof GlowStoneEvaporatorBlockEntity) {
+                    NetworkHooks.openScreen(((ServerPlayer) pPlayer), (GlowStoneEvaporatorBlockEntity) blockEntity, newPos);
+                } else {
+                    throw new IllegalStateException("Container provider is missing!");
+                }
+            } else {
+                if (blockEntity instanceof GlowStoneEvaporatorBlockEntity) {
+                    CelestialAltarBlockEntity altarBlockEntity = ((GlowStoneEvaporatorBlockEntity) blockEntity).getAltar();
+                    if(altarBlockEntity != null) {
+                        NetworkHooks.openScreen(((ServerPlayer) pPlayer), altarBlockEntity, newPos);
+                    }
+                } else {
+                    throw new IllegalStateException("Container provider is missing!");
+                }
+            }
+        }
+        return InteractionResult.sidedSuccess(pLevel.isClientSide);
     }
 
     @Override
@@ -144,6 +179,36 @@ public class GlowStoneEvaporatorBlock extends Block{
         };
     }
 
+
+    @Nullable
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
+        return pState.getValue(PART) == GSE_Part.UPPER ? null : new GlowStoneEvaporatorBlockEntity(pPos, pState);
+    }
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
+        return pLevel.isClientSide ? null : createTickerHelper(pBlockEntityType, ModBlockEntities.GLOWSTONE_EVAPORATOR_BLOCK_ENTITY.get(), GlowStoneEvaporatorBlockEntity::tick);
+    }
+
+    @Override
+    public RenderShape getRenderShape(BlockState pState) {
+        return RenderShape.MODEL;
+    }
+
+    @Override
+    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
+        if(!pLevel.isClientSide) {
+            if (!pState.is(pNewState.getBlock())) {
+                BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
+                if (blockEntity instanceof GlowStoneEvaporatorBlockEntity) {
+                    ((GlowStoneEvaporatorBlockEntity) blockEntity).dropItems();
+                }
+            }
+        }
+        super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
+    }
 
 
     private enum GSE_Part implements StringRepresentable{
