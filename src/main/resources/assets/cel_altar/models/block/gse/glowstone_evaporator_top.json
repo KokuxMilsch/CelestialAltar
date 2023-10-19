@@ -1,0 +1,44 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "minecraft:respawn_anchor",
+	"textures": {
+		"4": "cel_altar:block/gse_top_part"
+	},
+	"elements": [
+		{
+			"from": [6, 0, 6],
+			"to": [10, 1, 10],
+			"faces": {
+				"north": {"uv": [2, 6, 6, 7], "texture": "#4"},
+				"east": {"uv": [2, 6, 6, 7], "texture": "#4"},
+				"south": {"uv": [2, 6, 6, 7], "texture": "#4"},
+				"west": {"uv": [2, 6, 6, 7], "texture": "#4"},
+				"up": {"uv": [2, 2, 6, 6], "texture": "#4"},
+				"down": {"uv": [6, 6, 2, 2], "texture": "#4", "cullface": "down"}
+			}
+		},
+		{
+			"from": [7, 1, 7],
+			"to": [9, 12, 9],
+			"faces": {
+				"north": {"uv": [0, 0, 2, 11], "texture": "#4"},
+				"east": {"uv": [0, 0, 2, 11], "texture": "#4"},
+				"south": {"uv": [0, 0, 2, 11], "texture": "#4"},
+				"west": {"uv": [0, 0, 2, 11], "texture": "#4"},
+				"up": {"uv": [2, 0, 4, 2], "texture": "#4", "cullface": "up"}
+			}
+		},
+		{
+			"from": [6.25, 10.25, 6.25],
+			"to": [9.75, 13.75, 9.75],
+			"faces": {
+				"north": {"uv": [11, 0, 16, 5], "texture": "#4"},
+				"east": {"uv": [11, 0, 16, 5], "texture": "#4"},
+				"south": {"uv": [11, 0, 16, 5], "texture": "#4"},
+				"west": {"uv": [11, 0, 16, 5], "texture": "#4"},
+				"up": {"uv": [11, 0, 16, 5], "texture": "#4"},
+				"down": {"uv": [11, 0, 16, 5], "texture": "#4"}
+			}
+		}
+	]
+}

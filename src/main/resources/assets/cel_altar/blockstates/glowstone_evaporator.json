@@ -1,19 +1,64 @@
 {
   "variants": {
-    "charges=0": {
-      "model": "minecraft:block/respawn_anchor_0"
+    "standalone=true,part=lower,charges=0": {
+      "model": "cel_altar:block/gse/glowstone_evaporator_bottom_0"
     },
-    "charges=1": {
-      "model": "minecraft:block/respawn_anchor_1"
+    "standalone=true,part=lower,charges=1": {
+      "model": "cel_altar:block/gse/glowstone_evaporator_bottom_1"
     },
-    "charges=2": {
-      "model": "minecraft:block/respawn_anchor_2"
+    "standalone=true,part=lower,charges=2": {
+      "model": "cel_altar:block/gse/glowstone_evaporator_bottom_2"
     },
-    "charges=3": {
-      "model": "minecraft:block/respawn_anchor_3"
+    "standalone=true,part=lower,charges=3": {
+      "model": "cel_altar:block/gse/glowstone_evaporator_bottom_3"
     },
-    "charges=4": {
-      "model": "minecraft:block/respawn_anchor_4"
+    "standalone=true,part=lower,charges=4": {
+      "model": "cel_altar:block/gse/glowstone_evaporator_bottom_4"
+    },
+    "standalone=true,part=upper,charges=0": {
+      "model": "cel_altar:block/gse/glowstone_evaporator_top"
+    },
+    "standalone=true,part=upper,charges=1": {
+      "model": "cel_altar:block/gse/glowstone_evaporator_top"
+    },
+    "standalone=true,part=upper,charges=2": {
+      "model": "cel_altar:block/gse/glowstone_evaporator_top"
+    },
+    "standalone=true,part=upper,charges=3": {
+      "model": "cel_altar:block/gse/glowstone_evaporator_top"
+    },
+    "standalone=true,part=upper,charges=4": {
+      "model": "cel_altar:block/gse/glowstone_evaporator_top"
+    },
+    "standalone=false,part=lower,charges=0": {
+      "model": "cel_altar:block/gse/glowstone_evaporator_bottom_0"
+    },
+    "standalone=false,part=lower,charges=1": {
+      "model": "cel_altar:block/gse/glowstone_evaporator_bottom_1"
+    },
+    "standalone=false,part=lower,charges=2": {
+      "model": "cel_altar:block/gse/glowstone_evaporator_bottom_2"
+    },
+    "standalone=false,part=lower,charges=3": {
+      "model": "cel_altar:block/gse/glowstone_evaporator_bottom_3"
+    },
+    "standalone=false,part=lower,charges=4": {
+      "model": "cel_altar:block/gse/glowstone_evaporator_bottom_4"
+    },
+    "standalone=false,part=upper,charges=0": {
+      "model": "cel_altar:block/gse/glowstone_evaporator_top"
+    },
+    "standalone=false,part=upper,charges=1": {
+      "model": "cel_altar:block/gse/glowstone_evaporator_top"
+    },
+    "standalone=false,part=upper,charges=2": {
+      "model": "cel_altar:block/gse/glowstone_evaporator_top"
+    },
+    "standalone=false,part=upper,charges=3": {
+      "model": "cel_altar:block/gse/glowstone_evaporator_top"
+    },
+    "standalone=false,part=upper,charges=4": {
+      "model": "cel_altar:block/gse/glowstone_evaporator_top"
     }
   }
 }
