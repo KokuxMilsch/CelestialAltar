@@ -16,6 +16,8 @@ public class ModMenuTypes {
 
     public static final RegistryObject<MenuType<CelestialAltarMenu>> CELESTIAL_ALTAR_MENU = registerMenuType(CelestialAltarMenu::new, "celestial_altar_menu");
 
+    public static final RegistryObject<MenuType<GlowStoneEvaporatorMenu>> GLOWSTONE_EVAPORATOR_MENU = registerMenuType(GlowStoneEvaporatorMenu::new, "glowstone_evaporator_menu");
+
 
     private static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> registerMenuType(IContainerFactory<T> factory, String name) {
         return MENU_TYPES.register(name, () -> IForgeMenuType.create(factory));
