@@ -2,6 +2,8 @@ package com.kokuxmilsch.celestialaltar.block;
 
 import com.kokuxmilsch.celestialaltar.block.entity.CelestialAltarBlockEntity;
 import com.kokuxmilsch.celestialaltar.block.entity.ModBlockEntities;
+import com.kokuxmilsch.celestialaltar.client.helper.ClientHelper;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
@@ -87,18 +89,8 @@ public class CelestialAltarBlock extends BaseEntityBlock {
     @Override
     public void animateTick(BlockState pState, Level pLevel, BlockPos pPos, RandomSource pRandom) {
         //Ambient Animation
-        if(pState.getValue(ACTIVE)) {
-            for(int i = 0; i < 30; ++i) {
-                double d1 = pRandom.nextGaussian() * 0.3D; //delta 1
-                double d3 = pRandom.nextGaussian() * 0.1D; //delta 2
-                double d5 = pRandom.nextGaussian() * 0.3D; //delta 3
-                double d6 = pRandom.nextGaussian() * 0.4D; //Speed multiplier
-                double d7 = pRandom.nextGaussian() * 0.4D; //Speed multiplier
-                double d8 = pRandom.nextGaussian() * 0.4D; //Speed multiplier
-
-                pLevel.addParticle(ParticleTypes.ENCHANT, true,pPos.getX()+0.5D + d1, pPos.getY()+0.7D + d3, pPos.getZ()+0.5D + d5, d6, d7, d8);
-
-            }
+        if(pState.getValue(ACTIVE) && pLevel instanceof ClientLevel) {
+            ClientHelper.addParticleServerFormat((ClientLevel) pLevel, ParticleTypes.ENCHANT, pPos.getX()+0.5D, pPos.getY()+0.7D, pPos.getZ()+0.5D, 0.3, 0.1, 0.3, 30, 1);
         }
     }
 
