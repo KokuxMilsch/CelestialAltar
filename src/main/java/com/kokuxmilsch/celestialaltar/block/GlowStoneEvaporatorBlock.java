@@ -82,6 +82,14 @@ public class GlowStoneEvaporatorBlock extends Block{
     @Override
     public BlockState updateShape(BlockState pState, Direction pDirection, BlockState pNeighborState, LevelAccessor pLevel, BlockPos pCurrentPos, BlockPos pNeighborPos) {
         if(pDirection.getAxis() == Direction.Axis.Y) {
+            if(pNeighborState.is(this)) {
+                if (pNeighborState.getValue(STANDALONE) && !pState.getValue(STANDALONE)) {
+                    return pState.setValue(STANDALONE, true);
+                }
+                else if (!pNeighborState.getValue(STANDALONE) && pState.getValue(STANDALONE)) {
+                    return pState.setValue(STANDALONE, false);
+                }
+            }
             return switch (pState.getValue(PART)) {
                 case LOWER -> (pDirection == Direction.UP) ? ((pNeighborState.is(this) && pNeighborState.getValue(PART) == GSE_Part.UPPER) ? pState : Blocks.AIR.defaultBlockState()) : pState;
 
