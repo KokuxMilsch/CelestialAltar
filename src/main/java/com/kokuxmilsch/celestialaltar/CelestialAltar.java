@@ -91,6 +91,7 @@ public class CelestialAltar
         {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.ALTAR.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.CELESTIAL_CRYSTAL.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.GLOW_STONE_EVAPORATOR.get(), RenderType.cutout());
             MenuScreens.register(ModMenuTypes.CELESTIAL_ALTAR_MENU.get(), CelestialAltarScreen::new);
         }
 
