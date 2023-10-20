@@ -77,9 +77,11 @@ public class GlowStoneEvaporatorBlock extends BaseEntityBlock {
                 }
             } else {
                 if (blockEntity instanceof GlowStoneEvaporatorBlockEntity) {
-                    CelestialAltarBlockEntity altarBlockEntity = ((GlowStoneEvaporatorBlockEntity) blockEntity).getAltar();
-                    if(altarBlockEntity != null) {
-                        NetworkHooks.openScreen(((ServerPlayer) pPlayer), altarBlockEntity, newPos);
+                    BlockPos altarBlockPos = ((GlowStoneEvaporatorBlockEntity) blockEntity).getAltarPos();
+                    if(altarBlockPos != null) {
+                        if(pLevel.getBlockEntity(altarBlockPos) instanceof CelestialAltarBlockEntity) {
+                            NetworkHooks.openScreen(((ServerPlayer) pPlayer), (CelestialAltarBlockEntity) pLevel.getBlockEntity(altarBlockPos), altarBlockPos);
+                        }
                     }
                 } else {
                     throw new IllegalStateException("Container provider is missing!");

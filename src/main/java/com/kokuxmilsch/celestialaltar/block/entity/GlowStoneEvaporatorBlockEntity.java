@@ -34,7 +34,7 @@ public class GlowStoneEvaporatorBlockEntity extends BlockEntity implements MenuP
     private final int maxProgress = 100;
     private int burnTime = 0;
 
-    private CelestialAltarBlockEntity altar;
+    private BlockPos altarPos;
 
     private final ItemStackHandler itemStackHandler = new ItemStackHandler(SLOTS) {
         @Override
@@ -137,8 +137,8 @@ public class GlowStoneEvaporatorBlockEntity extends BlockEntity implements MenuP
         Containers.dropContents(this.level, this.worldPosition, temp);
     }
 
-    public void setAltar(@Nullable CelestialAltarBlockEntity altarBlockEntity) {
-        this.altar = altarBlockEntity;
+    public void setAltar(@Nullable BlockPos altarBlockPos) {
+        this.altarPos = altarBlockPos;
     }
 
     public static void tick(Level level, BlockPos blockPos, BlockState blockState, GlowStoneEvaporatorBlockEntity pBlockEntity) {
@@ -165,7 +165,7 @@ public class GlowStoneEvaporatorBlockEntity extends BlockEntity implements MenuP
         Minecraft.getInstance().player.sendSystemMessage(Component.literal("CRAFTED ITEM!!"));
     }
 
-    public @Nullable CelestialAltarBlockEntity getAltar() {
-        return this.altar;
+    public @Nullable BlockPos getAltarPos() {
+        return this.altarPos;
     }
 }

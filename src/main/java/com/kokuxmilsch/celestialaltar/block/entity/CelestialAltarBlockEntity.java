@@ -369,7 +369,6 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
 
     }
 
-    //TODO make it workad
     public void updateGlowStoneEvaporators(int charge, boolean activation, boolean deactivation) {
         BlockState gseState = ModBlocks.GLOW_STONE_EVAPORATOR.get().defaultBlockState(); // charges=0; standalone=true, part=bottom
         if(activation) {
@@ -382,9 +381,12 @@ public class CelestialAltarBlockEntity extends BlockEntity implements MenuProvid
             for (int j = -2; j <= 2; j+=4) {
                 if(this.level.getBlockState(this.worldPosition.offset(i, 2, j)).is(ModBlocks.GLOW_STONE_EVAPORATOR.get())) {
                     GlowStoneEvaporatorBlockEntity evaporatorBlockEntity = (GlowStoneEvaporatorBlockEntity) this.level.getBlockEntity(this.worldPosition.offset(i, 2, j));
-                    this.level.setBlock(this.worldPosition.offset(i, 2, j), gseState, 3);
+                    this.level.setBlock(this.worldPosition.offset(i, 2, j), ModBlocks.GLOW_STONE_EVAPORATOR.get().defaultBlockState()
+                                    .setValue(GlowStoneEvaporatorBlock.CHARGE, charge)
+                                    .setValue(GlowStoneEvaporatorBlock.STANDALONE, deactivation),
+                            3);
                     if(activation) {
-                        evaporatorBlockEntity.setAltar(this);
+                        evaporatorBlockEntity.setAltar(this.worldPosition);
                     } else if(deactivation){
                         evaporatorBlockEntity.setAltar(null);
                     }
